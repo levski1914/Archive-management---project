@@ -5,6 +5,8 @@ import Login from "./components/Auth/Login";
 import RegisterCompany from "./components/Auth/RegisterCompany";
 import AdminPage from "./pages/AdminPage";
 import HomePage from "./pages/HomePage";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import ProtectedRoute from "./components/Auth/ProtectedRoute";
 import axios from "axios";
 import MasterPage from "./pages/MasterPage";
@@ -59,36 +61,45 @@ function App() {
 
   return (
     <Router>
-      <Navbar />
+      <Navbar user={user} onLogout={handleLogout} />
       <Routes>
-        <Route path="/login" element={<Login onLogin={handleLogin} />} />
-        <Route path="/register" element={<RegisterCompany />} />
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRoute user={user && user.role === "admin"}>
-              <AdminPage onLogout={handleLogout} />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/" element={<HomePage />} />
-        <Route
-          path="/master-dashboard"
-          element={
-            <ProtectedRoute user={user && user.role === "master"}>
-              <MasterPage />
-            </ProtectedRoute>
-          }
-        />
+        {!user && (
+          <>
+            <Route path="/login" element={<Login onLogin={handleLogin} />} />
+            <Route path="/register" element={<RegisterCompany />} />
+            <Route path="/" element={<HomePage />} />
+          </>
+        )}
+        {user && user?.role === "admin" && (
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute user={user?.role === "admin"}>
+                <AdminPage />
+              </ProtectedRoute>
+            }
+          />
+        )}
+        {user && user?.role === "master" && (
+          <Route
+            path="/master-dashboard"
+            element={
+              <ProtectedRoute user={user?.role === "master"}>
+                <MasterPage />
+              </ProtectedRoute>
+            }
+          />
+        )}
         <Route
           path="/slave-dashboard"
           element={
-            // <ProtectedRoute user={user && user.role === "slave"}>
-            <SlavePage />
-            // {/* </ProtectedRoute> */}
+            <ProtectedRoute user={user && user.role === "slave"}>
+              <SlavePage />
+            </ProtectedRoute>
           }
         />
       </Routes>
+      <ToastContainer />
     </Router>
   );
 }

@@ -6,6 +6,10 @@ exports.createRequest = async (req, res) => {
     const { documentId, reason } = req.body;
     const { id: userId } = req.user;
 
+    console.log("Received data:", { documentId, reason, userId });
+    if (!documentId || !reason || !userId) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
     const newRequest = new Request({
       documentId,
       reason,
@@ -13,21 +17,26 @@ exports.createRequest = async (req, res) => {
       status: "Pending",
     });
 
+    // console.log("details", newRequest);
     await newRequest.save();
-    res.status(201).json(newRequest);
+    const populatedRequest = await Request.findById(newRequest._id).populate(
+      "documentId"
+    );
+
+    console.log(populatedRequest);
+    req.io.emit("new_request", populatedRequest);
+    res.status(201).json(populatedRequest);
   } catch (error) {
     res.status(500).json({ message: "Error creating request", error });
   }
 };
 
-exports.getRequestsByUser = async (req, res) => {
+exports.getAllRequests = async (req, res) => {
   try {
-    const requests = await Request.find({ userId: req.user._id }).populate(
-      "documentId"
-    ); // Увери се, че полето е "documentId", ако е различно, смени го
+    const requests = await Request.find().populate("documentId");
     res.status(200).json(requests);
   } catch (error) {
-    res.status(500).json({ message: "Error fetching requests", error });
+    res.status(500).json({ message: "Error fetching all requests", error });
   }
 };
 exports.updateRequestStatus = async (req, res) => {

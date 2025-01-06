@@ -62,8 +62,6 @@ exports.login = async (req, res) => {
       return res.status(404).json({ message: "Company not found" });
     }
 
-    console.log("Company found:", company);
-
     // Намери потребителя по email и companyName (временно)
     const user = await User.findOne({ email, companyId: company._id }); // Добавяме companyId от намерената компания
     if (!user) {
@@ -71,7 +69,7 @@ exports.login = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    console.log("User found:", user);
+    // console.log("User found:", user);
 
     // Проверка на паролата
     const isMatch = await bcrypt.compare(password, user.password);

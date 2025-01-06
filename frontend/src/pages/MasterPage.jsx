@@ -1,8 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
+import { io } from "socket.io-client";
+import { toast } from "react-toastify";
 const MasterPage = () => {
   const [folders, setFolders] = useState([]);
   const [requests, setRequests] = useState([]);
+  const [filteredFolders, setFilteredFolders] = useState([]);
+  const [searchQuery, setSearchQuery] = useState([]);
+  const socket = useRef(null);
   const [newFolder, setNewFolder] = useState({
     name: "",
     client: "",
@@ -15,6 +20,26 @@ const MasterPage = () => {
   useEffect(() => {
     fetchFolders();
     fetchRequests();
+
+    socket.current = io("http://localhost:5000");
+
+    socket.current.on("connect", () => {
+      console.log("Connected to server");
+    });
+
+    socket.current.on("disconnect", () => {
+      console.log("Disconnected from server");
+    });
+
+    socket.current.on("new_request", (newRequest) => {
+      console.log("Received new request:", newRequest);
+      setRequests((prevRequests) => [newRequest, ...prevRequests]);
+      toast.success("New request received!");
+    });
+
+    return () => {
+      socket.current.disconnect();
+    };
   }, []);
 
   const fetchFolders = async () => {
@@ -23,8 +48,9 @@ const MasterPage = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       setFolders(response.data);
+      setFilteredFolders(response.data);
     } catch (error) {
-      console.log("error fetching data: ", error);
+      console.log("Error fetching folders: ", error);
     }
   };
 
@@ -34,12 +60,25 @@ const MasterPage = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       setRequests(response.data);
-    } catch (err) {
-      console.log("Error fetching requests: ", err);
+    } catch (error) {
+      console.error("Error fetching requests: ", error);
     }
   };
 
-  const handleAddFolder = async (req, res) => {
+  const handleSearch = (e) => {
+    const query = e.target.value.toLowerCase();
+    setSearchQuery(query);
+    const filtered = folders.filter(
+      (folder) =>
+        folder.name.toLowerCase().includes(query) ||
+        folder.client.toLowerCase().includes(query) ||
+        folder.year.toString().includes(query)
+    );
+    setFilteredFolders(filtered);
+  };
+
+  const handleAddFolder = async (e) => {
+    e.preventDefault();
     try {
       const response = await axios.post(
         "http://localhost:5000/api/folder",
@@ -49,6 +88,7 @@ const MasterPage = () => {
         }
       );
       setFolders((prev) => [...prev, response.data]);
+      setFilteredFolders((prev) => [...prev, response.data]);
       setNewFolder({
         name: "",
         client: "",
@@ -56,8 +96,9 @@ const MasterPage = () => {
         code: "",
         location: { shelf: 0, column: 0, row: 0 },
       });
+      alert("Folder added successfully!");
     } catch (error) {
-      console.log("error creating folder: ", error);
+      console.error("Error adding folder: ", error);
     }
   };
 
@@ -71,6 +112,7 @@ const MasterPage = () => {
         }
       );
       fetchRequests();
+      toast.success("Request approved!");
     } catch (error) {
       console.error("Error approving request:", error);
     }
@@ -86,27 +128,28 @@ const MasterPage = () => {
         }
       );
       fetchRequests();
+      toast.error("Request rejected!");
     } catch (error) {
       console.error("Error rejecting request:", error);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-200 via-blue-300 to-purple-200 p-8">
+    <div className="min-h-screen bg-gray-100 p-8">
       <h1 className="text-4xl font-bold text-center text-gray-800 mb-8">
         Master Dashboard
       </h1>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Manage Folders Section */}
-        <section className="bg-white bg-opacity-80 shadow-lg rounded-lg p-6 backdrop-blur-lg">
-          <h2 className="text-2xl font-semibold text-gray-700 mb-6">
-            Manage Folders
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Add Document Section */}
+        <section className="bg-white shadow-md rounded-lg p-6">
+          <h2 className="text-xl font-bold text-gray-700 mb-4">
+            Добавяне на документ
           </h2>
-          <div className="space-y-4">
+          <form className="space-y-4" onSubmit={handleAddFolder}>
             <input
               type="text"
-              placeholder="Folder Name"
+              placeholder="Име на документа"
               value={newFolder.name}
               onChange={(e) =>
                 setNewFolder({ ...newFolder, name: e.target.value })
@@ -115,7 +158,7 @@ const MasterPage = () => {
             />
             <input
               type="text"
-              placeholder="Client"
+              placeholder="Клиент"
               value={newFolder.client}
               onChange={(e) =>
                 setNewFolder({ ...newFolder, client: e.target.value })
@@ -124,7 +167,7 @@ const MasterPage = () => {
             />
             <input
               type="number"
-              placeholder="Year"
+              placeholder="Година"
               value={newFolder.year}
               onChange={(e) =>
                 setNewFolder({ ...newFolder, year: e.target.value })
@@ -133,7 +176,7 @@ const MasterPage = () => {
             />
             <input
               type="text"
-              placeholder="Code"
+              placeholder="Код"
               value={newFolder.code}
               onChange={(e) =>
                 setNewFolder({ ...newFolder, code: e.target.value })
@@ -143,7 +186,7 @@ const MasterPage = () => {
             <div className="flex space-x-2">
               <input
                 type="number"
-                placeholder="Shelf"
+                placeholder="Рафтове"
                 value={newFolder.location.shelf}
                 onChange={(e) =>
                   setNewFolder({
@@ -155,7 +198,7 @@ const MasterPage = () => {
               />
               <input
                 type="number"
-                placeholder="Column"
+                placeholder="Колони"
                 value={newFolder.location.column}
                 onChange={(e) =>
                   setNewFolder({
@@ -167,7 +210,7 @@ const MasterPage = () => {
               />
               <input
                 type="number"
-                placeholder="Row"
+                placeholder="Редове"
                 value={newFolder.location.row}
                 onChange={(e) =>
                   setNewFolder({
@@ -179,126 +222,111 @@ const MasterPage = () => {
               />
             </div>
             <button
-              onClick={handleAddFolder}
-              className="w-full bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600"
+              type="submit"
+              className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600"
             >
-              Add Folder
+              Добави документ
             </button>
-          </div>
+          </form>
+        </section>
 
-          <ul className="mt-6 space-y-4">
-            {folders.map((folder) => (
-              <li
+        {/* Search Section */}
+        <section className="bg-white shadow-md rounded-lg p-6">
+          <h2 className="text-xl font-bold text-gray-700 mb-4">
+            Търсене на документи
+          </h2>
+          <input
+            type="text"
+            placeholder="Търси документи..."
+            value={searchQuery}
+            onChange={handleSearch}
+            className="w-full p-2 border rounded-lg"
+          />
+          <div className="mt-4 space-y-2 overflow-y-auto h-60">
+            {filteredFolders.map((folder) => (
+              <div
                 key={folder._id}
-                className="p-4 bg-gray-50 border rounded-lg shadow"
+                className="p-4 bg-gray-50 rounded-lg shadow-md"
               >
-                <p className="font-bold text-gray-700">{folder.name}</p>
-                <p className="text-sm text-gray-600">Client: {folder.client}</p>
-                <p className="text-sm text-gray-600">Year: {folder.year}</p>
-                <p className="text-sm text-gray-600">
-                  Location: Shelf {folder.location.shelf}, Column{" "}
-                  {folder.location.column}, Row {folder.location.row}
-                </p>
-              </li>
+                <p className="font-semibold text-gray-800">{folder.name}</p>
+                <p className="text-sm text-gray-600">Клиент: {folder.client}</p>
+                <p className="text-sm text-gray-600">Година: {folder.year}</p>
+              </div>
             ))}
-          </ul>
+          </div>
         </section>
 
         {/* Requests Section */}
-        <section className="bg-white bg-opacity-80 shadow-lg rounded-lg p-6 backdrop-blur-lg">
-          <h2 className="text-2xl font-semibold text-gray-700 mb-6">
-            Requests
-          </h2>
-          <ul className="space-y-4">
+        <section className="bg-white shadow-md rounded-lg p-6">
+          <h2 className="text-xl font-bold text-gray-700 mb-4">Заявки</h2>
+          <div className="space-y-4 overflow-y-auto h-80">
             {requests.map((request) => (
-              <li
+              <div
                 key={request._id}
-                className="p-4 bg-gray-50 border rounded-lg shadow flex justify-between items-center"
+                className="p-4 bg-gray-50 rounded-lg shadow-md"
               >
-                <div>
-                  <p className="font-bold text-gray-700">
-                    {request.documentId?.name || "Folder not found"}
-                  </p>
-                  <p
-                    className={`text-sm ${
-                      request.status === "Approved"
-                        ? "text-green-500"
-                        : request.status === "Rejected"
-                        ? "text-red-500"
-                        : "text-yellow-500"
-                    }`}
-                  >
-                    {request.status}
-                  </p>
-                </div>
+                <p className="font-semibold text-gray-800">
+                  {request.documentId?.name || "Неизвестен документ"}
+                </p>
+                <p
+                  className={`text-sm font-medium ${
+                    request.status === "Approved"
+                      ? "text-green-500"
+                      : "text-yellow-500"
+                  }`}
+                >
+                  {request.status}
+                </p>
                 {request.status === "Pending" && (
-                  <div className="flex space-x-2">
+                  <div className="flex space-x-2 mt-2">
                     <button
                       onClick={() => handleApproveRequest(request._id)}
                       className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
                     >
-                      Approve
+                      Approved
                     </button>
                     <button
                       onClick={() => handleRejectRequest(request._id)}
                       className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
                     >
-                      Reject
+                      Rejected
                     </button>
                   </div>
                 )}
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
+        </section>
+
+        {/* Request History Section */}
+        <section className="bg-white shadow-md rounded-lg p-6 col-span-1 md:col-span-2">
+          <h2 className="text-xl font-bold text-gray-700 mb-4">
+            История на заявките
+          </h2>
+          <div className="space-y-4 overflow-y-auto h-40">
+            {requests
+              .filter((req) => req.history?.length > 0)
+              .map((request) => (
+                <div
+                  key={request._id}
+                  className="p-4 bg-gray-50 rounded-lg shadow-md"
+                >
+                  <p className="font-semibold text-gray-800">
+                    {request.documentId?.name || "Неизвестен документ"}
+                  </p>
+                  <ul className="text-sm text-gray-600">
+                    {request.history.map((entry, index) => (
+                      <li key={index}>
+                        {entry.status} -{" "}
+                        {new Date(entry.updatedAt).toLocaleString()}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+          </div>
         </section>
       </div>
-
-      {/* Request History Section */}
-      <section className="bg-white bg-opacity-80 shadow-lg rounded-lg p-6 mt-8 backdrop-blur-lg">
-        <h2 className="text-2xl font-semibold text-gray-700 mb-4">
-          Request History
-        </h2>
-        <ul className="space-y-4">
-          {requests.map((request) => (
-            <li key={request._id} className="p-4 bg-gray-50 border rounded-lg">
-              <p className="font-bold text-gray-700">
-                {request.documentId?.name || "Folder not found"}
-              </p>
-              <p className="text-sm text-gray-600">{request.status}</p>
-              <ul className="mt-2 space-y-2">
-                {request.history?.length > 0 ? (
-                  request.history.map((entry, index) => (
-                    <li
-                      key={index}
-                      className="text-sm text-gray-600 flex items-center gap-2"
-                    >
-                      <span
-                        className={`${
-                          entry.status === "Approved"
-                            ? "bg-green-100 text-green-600"
-                            : entry.status === "Rejected"
-                            ? "bg-red-100 text-red-600"
-                            : "bg-yellow-100 text-yellow-600"
-                        } px-2 py-1 rounded-full text-xs font-medium`}
-                      >
-                        {entry.status}
-                      </span>
-                      <span>
-                        {new Date(entry.updatedAt).toLocaleString("en-US", {
-                          dateStyle: "medium",
-                          timeStyle: "short",
-                        })}
-                      </span>
-                    </li>
-                  ))
-                ) : (
-                  <li className="text-gray-500">No history available</li>
-                )}
-              </ul>
-            </li>
-          ))}
-        </ul>
-      </section>
     </div>
   );
 };
