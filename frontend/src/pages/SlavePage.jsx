@@ -2,6 +2,13 @@ import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { io } from "socket.io-client";
 import { toast } from "react-toastify";
+import {
+  FaClipboardList,
+  FaPaperPlane,
+  FaBook,
+  FaBell,
+  FaArrowRight,
+} from "react-icons/fa";
 const SlavePage = () => {
   const [requestData, setRequestData] = useState({
     documentId: "",
@@ -42,7 +49,7 @@ const SlavePage = () => {
             Authorization: token,
           },
         });
-        setRequests(response.data);
+        setRequests(response.data.filter((req) => !req.isReturned));
       } catch (error) {
         console.error("Error fetching requests:", error);
       }
@@ -50,6 +57,34 @@ const SlavePage = () => {
 
     fetchDocuments();
     fetchRequests();
+
+    socket.current = io("http://localhost:5000");
+
+    socket.current.on("connect", () => {
+      console.log("Socket connected");
+    });
+
+    socket.current.on("reminder", (data) => {
+      console.log("Received reminder:", token);
+
+      toast.info(data.message);
+    });
+
+    socket.current.on("disconnect", () => {
+      console.log("Socket disconnected");
+    });
+
+    socket.current.on("document_returned", (data) => {
+      console.log("Document returned:", data);
+      setRequests((prevRequests) =>
+        prevRequests.filter((req) => req._id !== data.requestId)
+      );
+      toast.success("You returned a document!");
+    });
+
+    return () => {
+      socket.current.disconnect();
+    };
   }, []);
 
   const handleChange = (e) => {
@@ -76,16 +111,17 @@ const SlavePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className="min-h-screen bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 p-8">
       <div className="max-w-5xl mx-auto">
-        <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
+        <h1 className="text-4xl font-extrabold text-white text-center mb-8">
           Slave Dashboard
         </h1>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Submit Request Form */}
-          <div className="bg-white shadow rounded-lg p-6">
-            <h2 className="text-2xl font-semibold text-gray-700 mb-4">
+          <div className="bg-white shadow-lg rounded-lg p-6">
+            <h2 className="text-2xl font-bold text-gray-700 mb-4 flex items-center">
+              <FaPaperPlane className="text-blue-500 mr-2" />
               Submit Request
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -93,7 +129,7 @@ const SlavePage = () => {
                 name="documentId"
                 value={requestData.documentId}
                 onChange={handleChange}
-                className="p-3 border rounded-lg w-full"
+                className="p-3 border rounded-lg w-full focus:ring focus:ring-blue-300"
               >
                 <option value="">Select Document</option>
                 {documents.map((doc) => (
@@ -107,55 +143,84 @@ const SlavePage = () => {
                 placeholder="Reason for request"
                 value={requestData.reason}
                 onChange={handleChange}
-                className="p-3 border rounded-lg w-full"
+                className="p-3 border rounded-lg w-full focus:ring focus:ring-blue-300"
               />
               <button
                 type="submit"
-                className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-300"
+                className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-300 w-full"
               >
                 Submit Request
               </button>
             </form>
           </div>
 
-          {/* Request List */}
-          <div className="bg-white shadow rounded-lg p-6">
-            <h2 className="text-2xl font-semibold text-gray-700 mb-4">
-              My Requests
+          {/* Documents to Return */}
+          <div className="bg-white shadow-lg rounded-lg p-6">
+            <h2 className="text-2xl font-bold text-gray-700 mb-4 flex items-center">
+              <FaClipboardList className="text-yellow-500 mr-2" />
+              Documents to Return
             </h2>
-            <div className="space-y-4">
+            <div className="space-y-4 overflow-y-auto h-60">
               {requests.length > 0 ? (
-                requests.map((req) => (
+                requests.map((request) => (
                   <div
-                    key={req._id}
-                    className="p-4 border rounded-lg bg-gray-50 shadow-sm"
+                    key={request._id}
+                    className="p-4 border rounded-lg bg-gray-50 shadow-md"
                   >
-                    <p className="text-lg font-semibold text-gray-800">
-                      Document: {req.documentId.name || "Not Found"}
+                    <p className="font-semibold text-gray-800">
+                      Document: {request.documentId?.name || "Not Found"}
                     </p>
                     <p className="text-sm text-gray-600">
-                      Reason: {req.reason}
+                      Reason: {request.reason}
                     </p>
-                    <p
-                      className={`text-sm font-semibold ${
-                        req.status === "Approved"
-                          ? "text-green-600"
-                          : req.status === "Rejected"
-                          ? "text-red-600"
-                          : "text-gray-600"
-                      }`}
-                    >
-                      Status: {req.status}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      Submitted on: {new Date(req.createdAt).toLocaleString()}
+                    <p className="text-sm font-semibold text-red-500">
+                      Status: Not Returned
                     </p>
                   </div>
                 ))
               ) : (
-                <p className="text-gray-600">No requests found.</p>
+                <p className="text-gray-600">No documents to return.</p>
               )}
             </div>
+          </div>
+        </div>
+
+        {/* My Requests Section */}
+        <div className="bg-white shadow-lg rounded-lg p-6 mt-8">
+          <h2 className="text-2xl font-bold text-gray-700 mb-4 flex items-center">
+            <FaBook className="text-green-500 mr-2" />
+            My Requests
+          </h2>
+          <div className="space-y-4 overflow-y-auto h-60">
+            {requests.length > 0 ? (
+              requests.map((req) => (
+                <div
+                  key={req._id}
+                  className="p-4 border rounded-lg bg-gray-50 shadow-sm"
+                >
+                  <p className="text-lg font-semibold text-gray-800">
+                    Document: {req.documentId?.name || "Not Found"}
+                  </p>
+                  <p className="text-sm text-gray-600">Reason: {req.reason}</p>
+                  <p
+                    className={`text-sm font-semibold ${
+                      req.status === "Approved"
+                        ? "text-green-600"
+                        : req.status === "Rejected"
+                        ? "text-red-600"
+                        : "text-gray-600"
+                    }`}
+                  >
+                    Status: {req.status}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Submitted on: {new Date(req.createdAt).toLocaleString()}
+                  </p>
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-600">No requests found.</p>
+            )}
           </div>
         </div>
       </div>

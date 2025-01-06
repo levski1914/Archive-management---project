@@ -1,6 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { io } from "socket.io-client";
+import {
+  FaFolderOpen,
+  FaSearch,
+  FaCheckCircle,
+  FaTimesCircle,
+  FaBell,
+  FaCheck,
+} from "react-icons/fa";
+
 import { toast } from "react-toastify";
 const MasterPage = () => {
   const [folders, setFolders] = useState([]);
@@ -37,6 +46,17 @@ const MasterPage = () => {
       toast.success("New request received!");
     });
 
+    socket.current.on("reminder", (data) => {
+      toast.info(data);
+    });
+
+    socket.current.on("document_returned", (data) => {
+      console.log("Document returned:", data);
+      setRequests((prevRequests) =>
+        prevRequests.filter((req) => req._id !== data.requestId)
+      );
+      toast.success("A document was returned!");
+    });
     return () => {
       socket.current.disconnect();
     };
@@ -134,16 +154,46 @@ const MasterPage = () => {
     }
   };
 
+  const sendReminder = async (id) => {
+    try {
+      await axios.post(
+        `http://localhost:5000/api/requests/${id}/reminder`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      toast.success("Reminder sent successfully");
+    } catch (error) {
+      console.log("error sending reminder: ", error);
+      toast.error("error sending reminder");
+    }
+  };
+
+  const markAsReturned = async (id) => {
+    try {
+      await axios.put(
+        `http://localhost:5000/api/requests/${id}/return`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      toast.success("Document marked as returned");
+      fetchRequests();
+    } catch (error) {
+      console.log("error marking document: ", error);
+      toast.error("error marking document as returned");
+    }
+  };
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
-      <h1 className="text-4xl font-bold text-center text-gray-800 mb-8">
+    <div className="min-h-screen bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 p-8">
+      <h1 className="text-4xl font-extrabold text-white text-center mb-8">
         Master Dashboard
       </h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Add Document Section */}
-        <section className="bg-white shadow-md rounded-lg p-6">
-          <h2 className="text-xl font-bold text-gray-700 mb-4">
+        <section className="bg-white shadow-lg rounded-lg p-6 border-t-4 border-blue-500">
+          <h2 className="text-2xl font-semibold text-gray-700 mb-4">
+            <FaFolderOpen className="inline-block mr-2 text-blue-500" />
             Добавяне на документ
           </h2>
           <form className="space-y-4" onSubmit={handleAddFolder}>
@@ -184,6 +234,7 @@ const MasterPage = () => {
               className="w-full p-2 border rounded-lg"
             />
             <div className="flex space-x-2">
+              <label htmlFor="shelf">Рафт</label>
               <input
                 type="number"
                 placeholder="Рафтове"
@@ -196,7 +247,9 @@ const MasterPage = () => {
                 }
                 className="w-full p-2 border rounded-lg"
               />
+              <label htmlFor="column">Колона</label>
               <input
+                id="column"
                 type="number"
                 placeholder="Колони"
                 value={newFolder.location.column}
@@ -208,7 +261,9 @@ const MasterPage = () => {
                 }
                 className="w-full p-2 border rounded-lg"
               />
+              <label htmlFor="row">Редове</label>
               <input
+                id="row"
                 type="number"
                 placeholder="Редове"
                 value={newFolder.location.row}
@@ -231,8 +286,9 @@ const MasterPage = () => {
         </section>
 
         {/* Search Section */}
-        <section className="bg-white shadow-md rounded-lg p-6">
-          <h2 className="text-xl font-bold text-gray-700 mb-4">
+        <section className="bg-white shadow-lg rounded-lg p-6 border-t-4 border-green-500">
+          <h2 className="text-2xl font-semibold text-gray-700 mb-4">
+            <FaSearch className="inline-block mr-2 text-green-500" />
             Търсене на документи
           </h2>
           <input
@@ -251,14 +307,20 @@ const MasterPage = () => {
                 <p className="font-semibold text-gray-800">{folder.name}</p>
                 <p className="text-sm text-gray-600">Клиент: {folder.client}</p>
                 <p className="text-sm text-gray-600">Година: {folder.year}</p>
+                <p className="text-sm font-bold text-gray-950">
+                  Локация: Рафт: {folder.location.shelf}, Колона:{" "}
+                  {folder.location.column}, Редове: {folder.location.row}
+                </p>
               </div>
             ))}
           </div>
         </section>
 
         {/* Requests Section */}
-        <section className="bg-white shadow-md rounded-lg p-6">
-          <h2 className="text-xl font-bold text-gray-700 mb-4">Заявки</h2>
+        <section className="bg-white shadow-lg rounded-lg p-6 border-t-4 border-yellow-500">
+          <h2 className="text-2xl font-semibold text-gray-700 mb-4">
+            <FaBell className="inline-block mr-2 text-yellow-500" /> Заявки
+          </h2>
           <div className="space-y-4 overflow-y-auto h-80">
             {requests.map((request) => (
               <div
@@ -297,9 +359,53 @@ const MasterPage = () => {
             ))}
           </div>
         </section>
-
+        <section className="bg-white shadow-lg rounded-lg p-6 border-t-4 border-indigo-500">
+          <h2 className="text-xl font-bold text-gray-700 mb-4">
+            Върнати документи
+          </h2>
+          <div className="space-y-4 overflow-y-auto h-80">
+            {requests.map((request) => (
+              <div
+                key={request._id}
+                className="p-4 bg-gray-50 rounded-lg shadow-md"
+              >
+                <p className="font-semibold text-gray-800">
+                  Document: {request.documentId?.name || "Not Found"}
+                </p>
+                <p className="text-sm text-gray-600">
+                  Reason: {request.reason}
+                </p>
+                <p
+                  className={`text-sm font-semibold ${
+                    request.isReturned ? "text-green-500" : "text-red-500"
+                  }`}
+                >
+                  Status: {request.isReturned ? "Returned" : "Not Returned"}
+                </p>
+                <div className="flex space-x-2 mt-2">
+                  {!request.isReturned && (
+                    <>
+                      <button
+                        onClick={() => sendReminder(request._id)}
+                        className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600"
+                      >
+                        Изпрати напомняне
+                      </button>
+                      <button
+                        onClick={() => markAsReturned(request._id)}
+                        className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
+                      >
+                        Успешно върнат
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
         {/* Request History Section */}
-        <section className="bg-white shadow-md rounded-lg p-6 col-span-1 md:col-span-2">
+        <section className="bg-white shadow-lg rounded-lg p-6 col-span-1 md:col-span-2 border-t-4 border-purple-500">
           <h2 className="text-xl font-bold text-gray-700 mb-4">
             История на заявките
           </h2>

@@ -4,21 +4,28 @@ const requestSchema = new mongoose.Schema({
   documentId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Folder",
-    required: true,
   },
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
+  reason: String,
   status: {
     type: String,
     enum: ["Pending", "Approved", "Rejected"],
     default: "Pending",
   },
-  reason: { type: String },
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date },
   history: [
     {
-      status: { type: String },
+      status: String,
       updatedAt: { type: Date, default: Date.now },
+    },
+  ],
+  isReturned: { type: Boolean, default: false }, // Ново поле
+  reminders: [
+    {
+      sentAt: { type: Date, default: Date.now }, // Дата на напомнянето
+      by: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // Кой е изпратил
     },
   ],
 });
