@@ -46,9 +46,7 @@ const Navbar = ({ onLogout, user }) => {
                   <li className="px-4 py-2 hover:bg-blue-700">
                     <Link to="/documents">Управление на документи</Link>
                   </li>
-                  <li className="px-4 py-2 hover:bg-blue-700">
-                    <Link to="/requests">Управление на заявки</Link>
-                  </li>
+
                   <li className="px-4 py-2 hover:bg-blue-700">
                     <Link to="/statistics">Статистика</Link>
                   </li>
