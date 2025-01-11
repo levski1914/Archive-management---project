@@ -12,6 +12,8 @@ import axios from "axios";
 import MasterPage from "./pages/MasterPage";
 import SlavePage from "./pages/SlavePage";
 import Navbar from "./components/common/Navbar";
+import DocumentsPage from "./pages/DocumentsPage";
+import StatisticPage from "./pages/StatisticPage";
 
 function App() {
   // const [count, setCount] = useState(0);
@@ -81,14 +83,32 @@ function App() {
           />
         )}
         {user && user?.role === "master" && (
-          <Route
-            path="/master-dashboard"
-            element={
-              <ProtectedRoute user={user?.role === "master"}>
-                <MasterPage />
-              </ProtectedRoute>
-            }
-          />
+          <>
+            <Route
+              path="/master-dashboard"
+              element={
+                <ProtectedRoute user={user?.role === "master"}>
+                  <MasterPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/documents"
+              element={
+                <ProtectedRoute user={user?.role === "master"}>
+                  <DocumentsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/statistics"
+              element={
+                <ProtectedRoute user={user?.role === "master"}>
+                  <StatisticPage />
+                </ProtectedRoute>
+              }
+            />
+          </>
         )}
         <Route
           path="/slave-dashboard"

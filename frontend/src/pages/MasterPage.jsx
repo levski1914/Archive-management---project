@@ -17,13 +17,7 @@ const MasterPage = () => {
   const [filteredFolders, setFilteredFolders] = useState([]);
   const [searchQuery, setSearchQuery] = useState([]);
   const socket = useRef(null);
-  const [newFolder, setNewFolder] = useState({
-    name: "",
-    client: "",
-    year: "",
-    code: "",
-    location: { shelf: 0, column: 0, row: 0 },
-  });
+
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -97,31 +91,6 @@ const MasterPage = () => {
     setFilteredFolders(filtered);
   };
 
-  const handleAddFolder = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post(
-        "http://localhost:5000/api/folder",
-        newFolder,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      setFolders((prev) => [...prev, response.data]);
-      setFilteredFolders((prev) => [...prev, response.data]);
-      setNewFolder({
-        name: "",
-        client: "",
-        year: "",
-        code: "",
-        location: { shelf: 0, column: 0, row: 0 },
-      });
-      alert("Folder added successfully!");
-    } catch (error) {
-      console.error("Error adding folder: ", error);
-    }
-  };
-
   const handleApproveRequest = async (id) => {
     try {
       await axios.put(
@@ -190,101 +159,6 @@ const MasterPage = () => {
       </h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Add Document Section */}
-        <section className="bg-white shadow-lg rounded-lg p-6 border-t-4 border-blue-500">
-          <h2 className="text-2xl font-semibold text-gray-700 mb-4">
-            <FaFolderOpen className="inline-block mr-2 text-blue-500" />
-            Добавяне на документ
-          </h2>
-          <form className="space-y-4" onSubmit={handleAddFolder}>
-            <input
-              type="text"
-              placeholder="Име на документа"
-              value={newFolder.name}
-              onChange={(e) =>
-                setNewFolder({ ...newFolder, name: e.target.value })
-              }
-              className="w-full p-2 border rounded-lg"
-            />
-            <input
-              type="text"
-              placeholder="Клиент"
-              value={newFolder.client}
-              onChange={(e) =>
-                setNewFolder({ ...newFolder, client: e.target.value })
-              }
-              className="w-full p-2 border rounded-lg"
-            />
-            <input
-              type="number"
-              placeholder="Година"
-              value={newFolder.year}
-              onChange={(e) =>
-                setNewFolder({ ...newFolder, year: e.target.value })
-              }
-              className="w-full p-2 border rounded-lg"
-            />
-            <input
-              type="text"
-              placeholder="Код"
-              value={newFolder.code}
-              onChange={(e) =>
-                setNewFolder({ ...newFolder, code: e.target.value })
-              }
-              className="w-full p-2 border rounded-lg"
-            />
-            <div className="flex space-x-2">
-              <label htmlFor="shelf">Рафт</label>
-              <input
-                type="number"
-                placeholder="Рафтове"
-                value={newFolder.location.shelf}
-                onChange={(e) =>
-                  setNewFolder({
-                    ...newFolder,
-                    location: { ...newFolder.location, shelf: e.target.value },
-                  })
-                }
-                className="w-full p-2 border rounded-lg"
-              />
-              <label htmlFor="column">Колона</label>
-              <input
-                id="column"
-                type="number"
-                placeholder="Колони"
-                value={newFolder.location.column}
-                onChange={(e) =>
-                  setNewFolder({
-                    ...newFolder,
-                    location: { ...newFolder.location, column: e.target.value },
-                  })
-                }
-                className="w-full p-2 border rounded-lg"
-              />
-              <label htmlFor="row">Редове</label>
-              <input
-                id="row"
-                type="number"
-                placeholder="Редове"
-                value={newFolder.location.row}
-                onChange={(e) =>
-                  setNewFolder({
-                    ...newFolder,
-                    location: { ...newFolder.location, row: e.target.value },
-                  })
-                }
-                className="w-full p-2 border rounded-lg"
-              />
-            </div>
-            <button
-              type="submit"
-              className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600"
-            >
-              Добави документ
-            </button>
-          </form>
-        </section>
-
         {/* Search Section */}
         <section className="bg-white shadow-lg rounded-lg p-6 border-t-4 border-green-500">
           <h2 className="text-2xl font-semibold text-gray-700 mb-4">

@@ -39,11 +39,23 @@ const Navbar = ({ onLogout, user }) => {
                 </li>
               )}
               {user.role === "master" && (
-                <li>
-                  <Link to="/master-dashboard" className="hover:underline">
-                    Master Dashboard
-                  </Link>
-                </li>
+                <>
+                  <li className="px-4 py-2 hover:bg-blue-700">
+                    <Link to="/master-dashboard">Начало</Link>
+                  </li>
+                  <li className="px-4 py-2 hover:bg-blue-700">
+                    <Link to="/documents">Управление на документи</Link>
+                  </li>
+                  <li className="px-4 py-2 hover:bg-blue-700">
+                    <Link to="/requests">Управление на заявки</Link>
+                  </li>
+                  <li className="px-4 py-2 hover:bg-blue-700">
+                    <Link to="/statistics">Статистика</Link>
+                  </li>
+                  <li className="px-4 py-2 hover:bg-blue-700">
+                    <Link to="/settings">Настройки</Link>
+                  </li>
+                </>
               )}
               <li>
                 <button
