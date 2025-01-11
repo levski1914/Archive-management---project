@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-
+import { FaTrashAlt } from "react-icons/fa";
+import { toast } from "react-toastify";
 const AdminPage = () => {
   const [users, setUsers] = useState([]);
   const [newUser, setNewUser] = useState({
@@ -32,6 +33,10 @@ const AdminPage = () => {
     fetchUsers();
   }, []);
   const deleteUser = async (userId) => {
+    if (!window.confirm("Сигурни ли сте, че искате да изтриете този документ?"))
+      return;
+    const token = localStorage.getItem("token");
+
     try {
       const response = await axios.delete(
         `https://archive-management-project.onrender.com/api/users/${userId}`,
@@ -39,7 +44,8 @@ const AdminPage = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      console.log(response.data.message); // Потребителят е изтрит успешно
+      toast.success(response.data.message); // Потребителят е изтрит успешно
+      setUsers(users.filter((user) => user._id !== userId)); // Изтриваме потребителя от списъка на клиентската страна
     } catch (error) {
       console.error("Error deleting user:", error);
     }
@@ -75,7 +81,7 @@ const AdminPage = () => {
         </h1>
 
         {/* Add User Form */}
-        <div className="bg-white shadow rounded-lg p-6 mb-6">
+        <div className="bg-white shadow-lg rounded-lg p-6 mb-6">
           <h2 className="text-2xl font-semibold text-gray-700 mb-4">
             Add New User
           </h2>
@@ -123,7 +129,7 @@ const AdminPage = () => {
         </div>
 
         {/* User List */}
-        <div className="bg-white shadow rounded-lg p-6">
+        <div className="bg-white shadow-lg rounded-lg p-6">
           <h2 className="text-2xl font-semibold text-gray-700 mb-4">
             Users List
           </h2>
@@ -131,13 +137,21 @@ const AdminPage = () => {
             {users.map((user) => (
               <div
                 key={user._id}
-                className="p-4 bg-gray-50 border rounded-lg shadow-sm"
+                className="p-4 bg-gray-50 border rounded-lg shadow-md relative"
               >
                 <p className="text-lg font-semibold text-gray-800">
                   {user.name}
                 </p>
                 <p className="text-sm text-gray-600">Email: {user.email}</p>
                 <p className="text-sm text-gray-600">Role: {user.role}</p>
+
+                {/* Delete Button */}
+                <button
+                  onClick={() => deleteUser(user._id)}
+                  className="absolute top-2 right-2 text-red-500 hover:text-red-700"
+                >
+                  <FaTrashAlt className="w-5 h-5" />
+                </button>
               </div>
             ))}
           </div>
