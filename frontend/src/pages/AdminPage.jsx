@@ -15,11 +15,14 @@ const AdminPage = () => {
       const token = localStorage.getItem("token");
 
       try {
-        const response = await axios.get("http://localhost:5000/api/users", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await axios.get(
+          "https://archive-management-project.onrender.com/api/users",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         setUsers(response.data);
       } catch (error) {
         console.log("error fetching users", error);
@@ -28,7 +31,19 @@ const AdminPage = () => {
 
     fetchUsers();
   }, []);
-
+  const deleteUser = async (userId) => {
+    try {
+      const response = await axios.delete(
+        `https://archive-management-project.onrender.com/api/users/${userId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      console.log(response.data.message); // Потребителят е изтрит успешно
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    }
+  };
   const handleChange = (e) => {
     setNewUser({ ...newUser, [e.target.name]: e.target.value });
   };
@@ -38,7 +53,7 @@ const AdminPage = () => {
     const token = localStorage.getItem("token");
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/users/add",
+        "https://archive-management-project.onrender.com/api/users/add",
         newUser,
         {
           headers: {

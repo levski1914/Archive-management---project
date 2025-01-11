@@ -19,7 +19,7 @@ const RegisterCompany = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/auth/register-company",
+        "https://archive-management-project.onrender.com/api/auth/register-company",
         formData
       );
       alert("Registration successful. Please login.");

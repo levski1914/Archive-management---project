@@ -30,7 +30,7 @@ const DocumentsPage = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/folder",
+        "https://archive-management-project.onrender.com/api/folder",
         newFolder,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -54,9 +54,12 @@ const DocumentsPage = () => {
     if (!window.confirm("Сигурни ли сте, че искате да изтриете този документ?"))
       return;
     try {
-      await axios.delete(`http://localhost:5000/api/folder/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.delete(
+        `https://archive-management-project.onrender.com/api/folder/${id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       setFolders((prev) => prev.filter((folder) => folder._id !== id));
       toast.success("Архивът изтрит успешно!");
@@ -73,7 +76,7 @@ const DocumentsPage = () => {
   const handleSaveEdit = async () => {
     try {
       await axios.put(
-        `http://localhost:5000/api/folder/${editingFolder._id}`,
+        `https://archive-management-project.onrender.com/api/folder/${editingFolder._id}`,
         editingFolder,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -93,9 +96,12 @@ const DocumentsPage = () => {
   };
   const fetchFolders = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/folder", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.get(
+        "https://archive-management-project.onrender.com/api/folder",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       setFolders(response.data);
     } catch (error) {
       console.log("Error fetching folders: ", error);

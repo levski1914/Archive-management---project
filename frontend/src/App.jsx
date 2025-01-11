@@ -27,7 +27,7 @@ function App() {
     if (token && userData) {
       setUser(userData);
       axios
-        .get("http://localhost:5000/api/auth/me", {
+        .get("https://archive-management-project.onrender.com/api/auth/me", {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((response) => {

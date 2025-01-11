@@ -24,7 +24,7 @@ const MasterPage = () => {
     fetchFolders();
     fetchRequests();
 
-    socket.current = io("http://localhost:5000");
+    socket.current = io("https://archive-management-project.onrender.com");
 
     socket.current.on("connect", () => {
       console.log("Connected to server");
@@ -58,9 +58,12 @@ const MasterPage = () => {
 
   const fetchFolders = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/folder", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.get(
+        "https://archive-management-project.onrender.com/api/folder",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       setFolders(response.data);
       setFilteredFolders(response.data);
     } catch (error) {
@@ -70,9 +73,12 @@ const MasterPage = () => {
 
   const fetchRequests = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/requests", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.get(
+        "https://archive-management-project.onrender.com/api/requests",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       setRequests(response.data);
     } catch (error) {
       console.error("Error fetching requests: ", error);
@@ -94,7 +100,7 @@ const MasterPage = () => {
   const handleApproveRequest = async (id) => {
     try {
       await axios.put(
-        `http://localhost:5000/api/requests/${id}`,
+        `https://archive-management-project.onrender.com/api/requests/${id}`,
         { status: "Approved" },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -110,7 +116,7 @@ const MasterPage = () => {
   const handleRejectRequest = async (id) => {
     try {
       await axios.put(
-        `http://localhost:5000/api/requests/${id}`,
+        `https://archive-management-project.onrender.com/api/requests/${id}`,
         { status: "Rejected" },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -126,7 +132,7 @@ const MasterPage = () => {
   const sendReminder = async (id) => {
     try {
       await axios.post(
-        `http://localhost:5000/api/requests/${id}/reminder`,
+        `https://archive-management-project.onrender.com/api/requests/${id}/reminder`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -141,7 +147,7 @@ const MasterPage = () => {
   const markAsReturned = async (id) => {
     try {
       await axios.put(
-        `http://localhost:5000/api/requests/${id}/return`,
+        `https://archive-management-project.onrender.com/api/requests/${id}/return`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );

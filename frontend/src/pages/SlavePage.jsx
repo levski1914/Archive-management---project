@@ -26,11 +26,14 @@ const SlavePage = () => {
       }
 
       try {
-        const response = await axios.get("http://localhost:5000/api/folder", {
-          headers: {
-            Authorization: token,
-          },
-        });
+        const response = await axios.get(
+          "https://archive-management-project.onrender.com/api/folder",
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
+        );
         setDocuments(response.data);
       } catch (error) {
         console.log("Error fetching data: ", error);
@@ -44,11 +47,14 @@ const SlavePage = () => {
       }
 
       try {
-        const response = await axios.get("http://localhost:5000/api/requests", {
-          headers: {
-            Authorization: token,
-          },
-        });
+        const response = await axios.get(
+          "https://archive-management-project.onrender.com/api/requests",
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
+        );
         setRequests(response.data.filter((req) => !req.isReturned));
       } catch (error) {
         console.error("Error fetching requests:", error);
@@ -58,7 +64,7 @@ const SlavePage = () => {
     fetchDocuments();
     fetchRequests();
 
-    socket.current = io("http://localhost:5000");
+    socket.current = io("https://archive-management-project.onrender.com");
 
     socket.current.on("connect", () => {
       console.log("Socket connected");
@@ -95,7 +101,7 @@ const SlavePage = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/requests",
+        "https://archive-management-project.onrender.com/api/requests",
         requestData,
         {
           headers: { Authorization: `Bearer ${token}` },
