@@ -15,7 +15,7 @@ const Navbar = ({ onLogout, user }) => {
   return (
     <nav
       className={`p-4 transition-all duration-300 ease-in-out ${
-        darkMode ? "bg-gray-700 text-white" : "bg-blue-500 text-black"
+        darkMode ? "bg-gray-700 text-white" : "bg-blue-500 text-white"
       }`}
     >
       <div className="container mx-auto flex justify-between items-center">
