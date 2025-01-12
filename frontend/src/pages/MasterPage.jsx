@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { io } from "socket.io-client";
 import {
@@ -11,14 +11,16 @@ import {
 } from "react-icons/fa";
 
 import { toast } from "react-toastify";
+import ThemeContext from "../services/ThemeContext";
 const MasterPage = () => {
   const [folders, setFolders] = useState([]);
   const [requests, setRequests] = useState([]);
   const [filteredFolders, setFilteredFolders] = useState([]);
   const [searchQuery, setSearchQuery] = useState([]);
   const socket = useRef(null);
-
+  // const [darkMode, setDarkMode] = useState(false);
   const token = localStorage.getItem("token");
+  const { darkMode } = useContext(ThemeContext);
 
   useEffect(() => {
     fetchFolders();
@@ -158,16 +160,39 @@ const MasterPage = () => {
       toast.error("error marking document as returned");
     }
   };
+
+  const toggleDarkMode = () => {
+    setDarkMode((prev) => !prev);
+    document.documentElement.classList.toggle("dark");
+  };
   return (
-    <div className="min-h-screen bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 p-8">
-      <h1 className="text-4xl font-extrabold text-white text-center mb-8">
+    <div
+      className={`min-h-screen p-8 transition-all duration-300 ease-in-out ${
+        darkMode
+          ? "bg-gray-800 text-white"
+          : "bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 text-black"
+      }`}
+    >
+      <h1
+        className={`text-4xl font-extrabold text-center mb-8 transition-all duration-300 ease-in-out ${
+          darkMode ? "text-gray-100" : "text-white"
+        }`}
+      >
         Master Dashboard
       </h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Search Section */}
-        <section className="bg-white shadow-lg rounded-lg p-6 border-t-4 border-green-500">
-          <h2 className="text-2xl font-semibold text-gray-700 mb-4">
+        <section
+          className={`p-6 rounded-lg shadow-lg transition-all duration-300 ease-in-out ${
+            darkMode ? "bg-gray-700" : "bg-white"
+          } border-t-4 ${darkMode ? "border-gray-600" : "border-green-500"}`}
+        >
+          <h2
+            className={`text-2xl font-semibold mb-4 transition-all duration-300 ease-in-out ${
+              darkMode ? "text-gray-200" : "text-gray-700"
+            }`}
+          >
             <FaSearch className="inline-block mr-2 text-green-500" />
             Търсене на документи
           </h2>
@@ -176,18 +201,44 @@ const MasterPage = () => {
             placeholder="Търси документи..."
             value={searchQuery}
             onChange={handleSearch}
-            className="w-full p-2 border rounded-lg"
+            className={`w-full p-2 rounded-lg transition-all duration-300 ease-in-out ${
+              darkMode ? "bg-gray-600 text-gray-300" : "bg-white text-black"
+            } border`}
           />
           <div className="mt-4 space-y-2 overflow-y-auto h-60">
             {filteredFolders.map((folder) => (
               <div
                 key={folder._id}
-                className="p-4 bg-gray-50 rounded-lg shadow-md"
+                className={`p-4 rounded-lg shadow-md transition-all duration-300 ease-in-out ${
+                  darkMode ? "bg-gray-700" : "bg-gray-50"
+                }`}
               >
-                <p className="font-semibold text-gray-800">{folder.name}</p>
-                <p className="text-sm text-gray-600">Клиент: {folder.client}</p>
-                <p className="text-sm text-gray-600">Година: {folder.year}</p>
-                <p className="text-sm font-bold text-gray-950">
+                <p
+                  className={`${
+                    darkMode ? "text-gray-300" : "text-gray-800"
+                  } font-semibold`}
+                >
+                  {folder.name}
+                </p>
+                <p
+                  className={`${
+                    darkMode ? "text-gray-400" : "text-gray-600"
+                  } text-sm`}
+                >
+                  Клиент: {folder.client}
+                </p>
+                <p
+                  className={`${
+                    darkMode ? "text-gray-400" : "text-gray-600"
+                  } text-sm`}
+                >
+                  Година: {folder.year}
+                </p>
+                <p
+                  className={`${
+                    darkMode ? "text-gray-400" : "text-gray-950"
+                  } text-sm font-bold`}
+                >
                   Локация: Рафт: {folder.location.shelf}, Колона:{" "}
                   {folder.location.column}, Редове: {folder.location.row}
                 </p>
@@ -197,17 +248,31 @@ const MasterPage = () => {
         </section>
 
         {/* Requests Section */}
-        <section className="bg-white shadow-lg rounded-lg p-6 border-t-4 border-yellow-500">
-          <h2 className="text-2xl font-semibold text-gray-700 mb-4">
+        <section
+          className={`p-6 rounded-lg shadow-lg transition-all duration-300 ease-in-out ${
+            darkMode ? "bg-gray-700" : "bg-white"
+          } border-t-4 ${darkMode ? "border-gray-600" : "border-yellow-500"}`}
+        >
+          <h2
+            className={`text-2xl font-semibold mb-4 transition-all duration-300 ease-in-out ${
+              darkMode ? "text-gray-200" : "text-gray-700"
+            }`}
+          >
             <FaBell className="inline-block mr-2 text-yellow-500" /> Заявки
           </h2>
           <div className="space-y-4 overflow-y-auto h-80">
             {requests.map((request) => (
               <div
                 key={request._id}
-                className="p-4 bg-gray-50 rounded-lg shadow-md"
+                className={`p-4 rounded-lg shadow-md transition-all duration-300 ease-in-out ${
+                  darkMode ? "bg-gray-700" : "bg-gray-50"
+                }`}
               >
-                <p className="font-semibold text-gray-800">
+                <p
+                  className={`${
+                    darkMode ? "text-gray-200" : "text-gray-800"
+                  } font-semibold`}
+                >
                   {request.documentId?.name || "Неизвестен документ"}
                 </p>
                 <p
@@ -223,13 +288,13 @@ const MasterPage = () => {
                   <div className="flex space-x-2 mt-2">
                     <button
                       onClick={() => handleApproveRequest(request._id)}
-                      className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
+                      className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-all duration-300 ease-in-out"
                     >
                       Approved
                     </button>
                     <button
                       onClick={() => handleRejectRequest(request._id)}
-                      className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+                      className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-all duration-300 ease-in-out"
                     >
                       Rejected
                     </button>
@@ -239,20 +304,40 @@ const MasterPage = () => {
             ))}
           </div>
         </section>
-        <section className="bg-white shadow-lg rounded-lg p-6 border-t-4 border-indigo-500">
-          <h2 className="text-xl font-bold text-gray-700 mb-4">
+
+        {/* Returned Documents Section */}
+        <section
+          className={`p-6 rounded-lg shadow-lg transition-all duration-300 ease-in-out ${
+            darkMode ? "bg-gray-700" : "bg-white"
+          } border-t-4 ${darkMode ? "border-gray-600" : "border-indigo-500"}`}
+        >
+          <h2
+            className={`text-xl font-bold mb-4 transition-all duration-300 ease-in-out ${
+              darkMode ? "text-gray-200" : "text-gray-700"
+            }`}
+          >
             Върнати документи
           </h2>
           <div className="space-y-4 overflow-y-auto h-80">
             {requests.map((request) => (
               <div
                 key={request._id}
-                className="p-4 bg-gray-50 rounded-lg shadow-md"
+                className={`p-4 rounded-lg shadow-md transition-all duration-300 ease-in-out ${
+                  darkMode ? "bg-gray-700" : "bg-gray-50"
+                }`}
               >
-                <p className="font-semibold text-gray-800">
+                <p
+                  className={`${
+                    darkMode ? "text-gray-200" : "text-gray-800"
+                  } font-semibold`}
+                >
                   Document: {request.documentId?.name || "Not Found"}
                 </p>
-                <p className="text-sm text-gray-600">
+                <p
+                  className={`${
+                    darkMode ? "text-gray-400" : "text-gray-600"
+                  } text-sm`}
+                >
                   Reason: {request.reason}
                 </p>
                 <p
@@ -267,13 +352,13 @@ const MasterPage = () => {
                     <>
                       <button
                         onClick={() => sendReminder(request._id)}
-                        className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600"
+                        className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition-all duration-300 ease-in-out"
                       >
                         Изпрати напомняне
                       </button>
                       <button
                         onClick={() => markAsReturned(request._id)}
-                        className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
+                        className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-all duration-300 ease-in-out"
                       >
                         Успешно върнат
                       </button>
@@ -285,8 +370,16 @@ const MasterPage = () => {
           </div>
         </section>
         {/* Request History Section */}
-        <section className="bg-white shadow-lg rounded-lg p-6 col-span-1 md:col-span-2 border-t-4 border-purple-500">
-          <h2 className="text-xl font-bold text-gray-700 mb-4">
+        <section
+          className={`p-6 rounded-lg shadow-lg transition-all duration-300 ease-in-out ${
+            darkMode ? "bg-gray-700" : "bg-white"
+          } border-t-4 ${darkMode ? "border-gray-600" : "border-indigo-500"}`}
+        >
+          <h2
+            className={`text-xl font-bold mb-4 transition-all duration-300 ease-in-out ${
+              darkMode ? "text-gray-200" : "text-gray-700"
+            }`}
+          >
             История на заявките
           </h2>
           <div className="space-y-4 overflow-y-auto h-40">

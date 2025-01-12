@@ -1,12 +1,12 @@
 
+body {
+  transition: all 0.3s ease-in-out;
+}
 
 a {
   font-weight: 500;
   color: #646cff;
   text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
 }
 
 

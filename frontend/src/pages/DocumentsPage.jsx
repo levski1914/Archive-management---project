@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   FaFolderOpen,
   FaTrashAlt,
@@ -9,10 +9,12 @@ import {
   FaCheck,
 } from "react-icons/fa";
 import { toast } from "react-toastify";
+import ThemeContext from "../services/ThemeContext";
 const DocumentsPage = () => {
   const [folders, setFolders] = useState([]);
   const [filteredFolders, setFilteredFolders] = useState([]);
   const [editingFolder, setEditingFolder] = useState(null);
+  const { darkMode } = useContext(ThemeContext);
   const [newFolder, setNewFolder] = useState({
     name: "",
     client: "",
@@ -111,10 +113,24 @@ const DocumentsPage = () => {
     setEditingFolder(null);
   };
   return (
-    <div className="container mx-auto p-6 space-y-8">
+    <div
+      className={`min-h-screen p-8 transition-all duration-300 ease-in-out ${
+        darkMode
+          ? "bg-gray-800 text-white"
+          : "bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 text-black"
+      }`}
+    >
       {/* Форма за добавяне на документ */}
-      <section className="bg-white shadow-lg rounded-lg p-6 border-t-4 border-blue-600">
-        <h2 className="text-2xl font-semibold text-gray-700 flex items-center mb-4">
+      <section
+        className={`p-6 rounded-lg shadow-lg transition-all duration-300 ease-in-out ${
+          darkMode ? "bg-gray-700" : "bg-white"
+        } border-t-4 ${darkMode ? "border-gray-600" : "border-green-500"}`}
+      >
+        <h2
+          className={`text-2xl flex font-semibold mb-4 transition-all duration-300 ease-in-out ${
+            darkMode ? "text-gray-200" : "text-gray-700"
+          }`}
+        >
           <FaFolderOpen className="text-blue-600 mr-2" />
           Добавяне на документ
         </h2>
@@ -127,7 +143,9 @@ const DocumentsPage = () => {
               onChange={(e) =>
                 setNewFolder({ ...newFolder, name: e.target.value })
               }
-              className="w-full p-2 border border-gray-300 rounded-lg"
+              className={`w-full p-2 rounded-lg transition-all duration-300 ease-in-out ${
+                darkMode ? "bg-gray-600 text-gray-300" : "bg-white text-black"
+              } border`}
               required
             />
             <input
@@ -137,7 +155,9 @@ const DocumentsPage = () => {
               onChange={(e) =>
                 setNewFolder({ ...newFolder, client: e.target.value })
               }
-              className="w-full p-2 border border-gray-300 rounded-lg"
+              className={`w-full p-2 rounded-lg transition-all duration-300 ease-in-out ${
+                darkMode ? "bg-gray-600 text-gray-300" : "bg-white text-black"
+              } border`}
               required
             />
             <input
@@ -147,7 +167,9 @@ const DocumentsPage = () => {
               onChange={(e) =>
                 setNewFolder({ ...newFolder, year: e.target.value })
               }
-              className="w-full p-2 border border-gray-300 rounded-lg"
+              className={`w-full p-2 rounded-lg transition-all duration-300 ease-in-out ${
+                darkMode ? "bg-gray-600 text-gray-300" : "bg-white text-black"
+              } border`}
               required
             />
             <input
@@ -157,7 +179,9 @@ const DocumentsPage = () => {
               onChange={(e) =>
                 setNewFolder({ ...newFolder, code: e.target.value })
               }
-              className="w-full p-2 border border-gray-300 rounded-lg"
+              className={`w-full p-2 rounded-lg transition-all duration-300 ease-in-out ${
+                darkMode ? "bg-gray-600 text-gray-300" : "bg-white text-black"
+              } border`}
               required
             />
           </div>
@@ -172,7 +196,9 @@ const DocumentsPage = () => {
                   location: { ...newFolder.location, shelf: e.target.value },
                 })
               }
-              className="w-full p-2 border border-gray-300 rounded-lg"
+              className={`w-full p-2 rounded-lg transition-all duration-300 ease-in-out ${
+                darkMode ? "bg-gray-600 text-gray-300" : "bg-white text-black"
+              } border`}
             />
             <input
               type="number"
@@ -184,7 +210,9 @@ const DocumentsPage = () => {
                   location: { ...newFolder.location, column: e.target.value },
                 })
               }
-              className="w-full p-2 border border-gray-300 rounded-lg"
+              className={`w-full p-2 rounded-lg transition-all duration-300 ease-in-out ${
+                darkMode ? "bg-gray-600 text-gray-300" : "bg-white text-black"
+              } border`}
             />
             <input
               type="number"
@@ -196,7 +224,9 @@ const DocumentsPage = () => {
                   location: { ...newFolder.location, row: e.target.value },
                 })
               }
-              className="w-full p-2 border border-gray-300 rounded-lg"
+              className={`w-full p-2 rounded-lg transition-all duration-300 ease-in-out ${
+                darkMode ? "bg-gray-600 text-gray-300" : "bg-white text-black"
+              } border`}
             />
           </div>
           <button
@@ -209,13 +239,25 @@ const DocumentsPage = () => {
       </section>
 
       {/* Таблица със списък на документи */}
-      <section className="bg-white shadow-md rounded-lg p-6">
-        <h3 className="text-xl font-semibold text-gray-700 mb-4">
+      <section
+        className={`p-4 mt-10 rounded-lg shadow-md transition-all duration-300 ease-in-out ${
+          darkMode ? "bg-gray-700" : "bg-gray-50"
+        }`}
+      >
+        <h2
+          className={`text-2xl flex font-semibold mb-4 transition-all duration-300 ease-in-out ${
+            darkMode ? "text-gray-200" : "text-gray-700"
+          }`}
+        >
           Списък с документи
-        </h3>
+        </h2>
         <table className="table-auto w-full text-left border-collapse">
           <thead>
-            <tr className="bg-gray-100">
+            <tr
+              className={`p-4 rounded-lg shadow-md transition-all duration-300 ease-in-out ${
+                darkMode ? "bg-gray-700" : "bg-gray-50"
+              }`}
+            >
               <th className="px-4 py-2 border">#</th>
               <th className="px-4 py-2 border">Име</th>
               <th className="px-4 py-2 border">Клиент</th>
@@ -260,14 +302,22 @@ const DocumentsPage = () => {
       </section>
       {editingFolder && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md relative">
+          <div
+            className={`bg-white rounded-lg shadow-lg p-6 w-full max-w-md relative ${
+              darkMode ? "bg-gray-700" : "bg-gray-50"
+            }`}
+          >
             <button
               onClick={closeModal}
               className="absolute top-2 right-2 text-gray-500 hover:text-red-500"
             >
               ✖
             </button>
-            <h2 className="text-xl font-bold text-gray-700 mb-4">
+            <h2
+              className={`text-2xl flex font-semibold mb-4 transition-all duration-300 ease-in-out ${
+                darkMode ? "text-gray-200" : "text-gray-700"
+              }`}
+            >
               Редактиране на документ
             </h2>
             <div className="space-y-4">
@@ -278,7 +328,9 @@ const DocumentsPage = () => {
                 onChange={(e) =>
                   setEditingFolder({ ...editingFolder, name: e.target.value })
                 }
-                className="w-full p-2 border rounded-lg"
+                className={`w-full p-2 rounded-lg transition-all duration-300 ease-in-out ${
+                  darkMode ? "bg-gray-600 text-gray-300" : "bg-white text-black"
+                } border`}
               />
               <input
                 type="text"
@@ -287,7 +339,9 @@ const DocumentsPage = () => {
                 onChange={(e) =>
                   setEditingFolder({ ...editingFolder, client: e.target.value })
                 }
-                className="w-full p-2 border rounded-lg"
+                className={`w-full p-2 rounded-lg transition-all duration-300 ease-in-out ${
+                  darkMode ? "bg-gray-600 text-gray-300" : "bg-white text-black"
+                } border`}
               />
               <input
                 type="number"
@@ -296,7 +350,9 @@ const DocumentsPage = () => {
                 onChange={(e) =>
                   setEditingFolder({ ...editingFolder, year: e.target.value })
                 }
-                className="w-full p-2 border rounded-lg"
+                className={`w-full p-2 rounded-lg transition-all duration-300 ease-in-out ${
+                  darkMode ? "bg-gray-600 text-gray-300" : "bg-white text-black"
+                } border`}
               />
               <input
                 type="text"
@@ -305,7 +361,9 @@ const DocumentsPage = () => {
                 onChange={(e) =>
                   setEditingFolder({ ...editingFolder, code: e.target.value })
                 }
-                className="w-full p-2 border rounded-lg"
+                className={`w-full p-2 rounded-lg transition-all duration-300 ease-in-out ${
+                  darkMode ? "bg-gray-600 text-gray-300" : "bg-white text-black"
+                } border`}
               />
               <div className="flex space-x-2">
                 <input
@@ -321,7 +379,11 @@ const DocumentsPage = () => {
                       },
                     })
                   }
-                  className="w-full p-2 border rounded-lg"
+                  className={`w-full p-2 rounded-lg transition-all duration-300 ease-in-out ${
+                    darkMode
+                      ? "bg-gray-600 text-gray-300"
+                      : "bg-white text-black"
+                  } border`}
                 />
                 <input
                   type="number"
@@ -336,7 +398,11 @@ const DocumentsPage = () => {
                       },
                     })
                   }
-                  className="w-full p-2 border rounded-lg"
+                  className={`w-full p-2 rounded-lg transition-all duration-300 ease-in-out ${
+                    darkMode
+                      ? "bg-gray-600 text-gray-300"
+                      : "bg-white text-black"
+                  } border`}
                 />
                 <input
                   type="number"
@@ -351,7 +417,11 @@ const DocumentsPage = () => {
                       },
                     })
                   }
-                  className="w-full p-2 border rounded-lg"
+                  className={`w-full p-2 rounded-lg transition-all duration-300 ease-in-out ${
+                    darkMode
+                      ? "bg-gray-600 text-gray-300"
+                      : "bg-white text-black"
+                  } border`}
                 />
               </div>
               <div className="flex justify-end space-x-4">

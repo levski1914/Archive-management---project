@@ -1,16 +1,23 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
+import { IoSunnyOutline } from "react-icons/io5";
+import { FaRegMoon } from "react-icons/fa";
+// import { ThemeContext } from "../../services/ThemeContext";
+import ThemeContext from "../../services/ThemeContext";
 const Navbar = ({ onLogout, user }) => {
   const navigate = useNavigate();
-
+  const { darkMode, toggleTheme } = useContext(ThemeContext);
   const handleLogout = () => {
     onLogout();
     navigate("/login");
   };
 
   return (
-    <nav className="bg-blue-500 text-white p-4 shadow-md">
+    <nav
+      className={`p-4 transition-all duration-300 ease-in-out ${
+        darkMode ? "bg-gray-700 text-white" : "bg-blue-500 text-black"
+      }`}
+    >
       <div className="container mx-auto flex justify-between items-center">
         {!user ? (
           <>
@@ -56,13 +63,26 @@ const Navbar = ({ onLogout, user }) => {
                   </li>
                 </>
               )}
-
-              <li>
+            </ul>
+            <ul className="flex align-middle justify-between ">
+              <li className="px-4 py-2">
                 <button
                   onClick={handleLogout}
                   className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
                 >
                   Logout
+                </button>
+              </li>
+              <li className="px-4 py-2">
+                <button
+                  onClick={toggleTheme}
+                  className={`ml-4 p-2 rounded ${
+                    darkMode
+                      ? "bg-gray-600 text-white"
+                      : "bg-gray-200 text-black"
+                  }`}
+                >
+                  {darkMode ? <IoSunnyOutline /> : <FaRegMoon />}
                 </button>
               </li>
             </ul>
