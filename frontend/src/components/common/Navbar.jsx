@@ -12,12 +12,12 @@ const Navbar = ({ onLogout, user }) => {
   return (
     <nav className="bg-blue-500 text-white p-4 shadow-md">
       <div className="container mx-auto flex justify-between items-center">
-        <div className="text-lg font-bold">
-          <Link to="/">Archive System</Link>
-        </div>
-        <ul className="flex space-x-6">
-          {!user ? (
-            <>
+        {!user ? (
+          <>
+            <div className="text-lg font-bold">
+              <Link to="/">Archive System</Link>
+            </div>
+            <ul className="flex justify-between space-x-6">
               <li>
                 <Link to="/login" className="hover:underline">
                   Login
@@ -28,9 +28,11 @@ const Navbar = ({ onLogout, user }) => {
                   Register
                 </Link>
               </li>
-            </>
-          ) : (
-            <>
+            </ul>
+          </>
+        ) : (
+          <>
+            <ul className="flex justify-between space-x-6">
               {user.role === "admin" && (
                 <li>
                   <Link to="/admin" className="hover:underline">
@@ -46,7 +48,6 @@ const Navbar = ({ onLogout, user }) => {
                   <li className="px-4 py-2 hover:bg-blue-700">
                     <Link to="/documents">Управление на документи</Link>
                   </li>
-
                   <li className="px-4 py-2 hover:bg-blue-700">
                     <Link to="/statistics">Статистика</Link>
                   </li>
@@ -55,6 +56,7 @@ const Navbar = ({ onLogout, user }) => {
                   </li>
                 </>
               )}
+
               <li>
                 <button
                   onClick={handleLogout}
@@ -63,9 +65,9 @@ const Navbar = ({ onLogout, user }) => {
                   Logout
                 </button>
               </li>
-            </>
-          )}
-        </ul>
+            </ul>
+          </>
+        )}
       </div>
     </nav>
   );

@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import "./App.css";
 import Login from "./components/Auth/Login";
 import RegisterCompany from "./components/Auth/RegisterCompany";
@@ -19,7 +24,6 @@ function App() {
   // const [count, setCount] = useState(0);
   const [user, setUser] = useState(null);
 
-  // Възстановяване на сесията от Local Storage
   useEffect(() => {
     const token = localStorage.getItem("token");
     const userData = JSON.parse(localStorage.getItem("user"));
@@ -72,6 +76,24 @@ function App() {
             <Route path="/" element={<HomePage />} />
           </>
         )}
+
+        {user && (
+          <Route
+            path="/"
+            element={
+              user.role === "admin" ? (
+                <Navigate to="/admin" replace />
+              ) : user.role === "master" ? (
+                <Navigate to="/master-dashboard" replace />
+              ) : user.role === "slave" ? (
+                <Navigate to="/slave-dashboard" replace />
+              ) : (
+                <Navigate to="/login" replace />
+              )
+            }
+          />
+        )}
+
         {user && user?.role === "admin" && (
           <Route
             path="/admin"
@@ -82,6 +104,7 @@ function App() {
             }
           />
         )}
+
         {user && user?.role === "master" && (
           <>
             <Route
@@ -110,6 +133,7 @@ function App() {
             />
           </>
         )}
+
         <Route
           path="/slave-dashboard"
           element={
