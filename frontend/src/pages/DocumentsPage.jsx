@@ -269,7 +269,7 @@ const DocumentsPage = () => {
           </thead>
           <tbody>
             {folders.map((folder, index) => (
-              <tr key={index} className="hover:bg-gray-50 transition">
+              <tr key={index} className=" transition">
                 <td className="px-4 py-2 border">{index + 1}</td>
                 <td className="px-4 py-2 border">{folder.name}</td>
                 <td className="px-4 py-2 border">{folder.client}</td>
