@@ -62,17 +62,28 @@ const Navbar = ({ onLogout, user }) => {
               )}
               {user.role === "master" && (
                 <>
-                  <li className="px-4 py-2 hover:bg-blue-700">
-                    <Link to="/master-dashboard">Начало</Link>
+                  <li className=" hover:bg-blue-700">
+                    <Link
+                      className="px-4 py-2 inline-block"
+                      to="/master-dashboard"
+                    >
+                      Начало
+                    </Link>
                   </li>
-                  <li className="px-4 py-2 hover:bg-blue-700">
-                    <Link to="/documents">Управление на документи</Link>
+                  <li className=" hover:bg-blue-700">
+                    <Link className="px-4 py-2 inline-block" to="/documents">
+                      Управление на документи
+                    </Link>
                   </li>
-                  <li className="px-4 py-2 hover:bg-blue-700">
-                    <Link to="/statistics">Статистика</Link>
+                  <li className=" hover:bg-blue-700">
+                    <Link className="px-4 py-2 inline-block" to="/statistics">
+                      Статистика
+                    </Link>
                   </li>
-                  <li className="px-4 py-2 hover:bg-blue-700">
-                    <Link to="/settings">Настройки</Link>
+                  <li className=" hover:bg-blue-700">
+                    <Link className="px-4 py-2 inline-block" to="/settings">
+                      Настройки
+                    </Link>
                   </li>
                 </>
               )}
