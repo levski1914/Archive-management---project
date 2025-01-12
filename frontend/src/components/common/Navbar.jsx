@@ -24,7 +24,7 @@ const Navbar = ({ onLogout, user }) => {
             <div className="text-lg font-bold">
               <Link to="/">Archive System</Link>
             </div>
-            <ul className="flex justify-between space-x-6">
+            <ul className="flex justify-between items-center align-middle space-x-6">
               <li>
                 <Link to="/login" className="hover:underline">
                   Login
@@ -34,6 +34,19 @@ const Navbar = ({ onLogout, user }) => {
                 <Link to="/register" className="hover:underline">
                   Register
                 </Link>
+              </li>
+
+              <li className="">
+                <button
+                  onClick={toggleTheme}
+                  className={`ml-4 p-2 rounded ${
+                    darkMode
+                      ? "bg-gray-600 text-white"
+                      : "bg-gray-200 text-black"
+                  }`}
+                >
+                  {darkMode ? <IoSunnyOutline /> : <FaRegMoon />}
+                </button>
               </li>
             </ul>
           </>
