@@ -20,6 +20,16 @@ import Navbar from "./components/common/Navbar";
 import DocumentsPage from "./pages/DocumentsPage";
 import StatisticPage from "./pages/StatisticPage";
 
+axios.interceptors.response.use((response)=>response,(error)=>{
+  if(error.response && error.response.status===401){
+    toast.error("Сесията ви е изтекла. Моля, влезте отново.")
+    localStorage.removeItem("token")
+    localStorage.removeItem("user")
+    window.location.href="/login"
+  }
+  return Promise.reject(error)
+})
+
 function App() {
   // const [count, setCount] = useState(0);
   const [user, setUser] = useState(null);
@@ -38,7 +48,11 @@ function App() {
           setUser(response.data);
         })
         .catch((error) => {
-          console.error("Token validation failed:", error);
+          if (error.response && error.response.status === 401) {
+            toast.error("Сесията ви е изтекла. Моля, влезте отново.");
+          } else {
+            console.error("Token validation failed:", error);
+          }
           localStorage.removeItem("token");
           localStorage.removeItem("user");
           setUser(null);
@@ -62,6 +76,7 @@ function App() {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    toast.info("Излязохте успешно от системата.");
     setUser(null);
   };
 
