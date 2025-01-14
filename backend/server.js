@@ -36,6 +36,11 @@ app.use("/api/folder", folderRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/requests", requestRoutes);
 
+
+app.get("/", (req, res) => {
+  res.send("Сървърът работи!");
+});
+
 io.on("connection", (socket) => {
   console.log("A user connected");
 
