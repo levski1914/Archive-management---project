@@ -176,7 +176,7 @@ const DocumentsPage = () => {
             />
             <input
               type="text"
-              placeholder="Код"
+              placeholder="Шифър"
               value={newFolder.code}
               onChange={(e) =>
                 setNewFolder({ ...newFolder, code: e.target.value })
@@ -256,7 +256,8 @@ const DocumentsPage = () => {
             За да добавите нов документ, попълнете полетата във формата по-долу, като предоставите информация за име, клиент, година, код и локация.
           </li>
           <ol className={`list-decimal pl-6 space-y-2 ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
-            <li>Още нещо</li>
+            <li>При липса на някоя от данните, може да се постави 0 или "липсва"</li>
+            <li>В начало, системата може да търси по 1 от 4те информации - име, клиент, година, шифър</li>
           </ol>
           <li>
             Използвайте таблицата за преглед на съществуващите документи. Тук ще намерите информация за име, клиент, година и код.
@@ -300,7 +301,7 @@ const DocumentsPage = () => {
               <th className="px-4 py-2 border">Име</th>
               <th className="px-4 py-2 border">Клиент</th>
               <th className="px-4 py-2 border">Година</th>
-              <th className="px-4 py-2 border">Код</th>
+              <th className="px-4 py-2 border">Шифър</th>
               <th className="px-4 py-2 border">Локация</th>
               <th className="px-4 py-2 border">Действия</th>
             </tr>
@@ -394,7 +395,7 @@ const DocumentsPage = () => {
               />
               <input
                 type="text"
-                placeholder="Код"
+                placeholder="Шифър"
                 value={editingFolder.code}
                 onChange={(e) =>
                   setEditingFolder({ ...editingFolder, code: e.target.value })
