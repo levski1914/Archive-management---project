@@ -120,8 +120,10 @@ const DocumentsPage = () => {
           : "bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 text-black"
       }`}
     >
-      {/* Форма за добавяне на документ */}
-      <section
+
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+   {/* Форма за добавяне на документ */}
+   <section
         className={`p-6 rounded-lg shadow-lg transition-all duration-300 ease-in-out ${
           darkMode ? "bg-gray-700" : "bg-white"
         } border-t-4 ${darkMode ? "border-gray-600" : "border-green-500"}`}
@@ -237,7 +239,43 @@ const DocumentsPage = () => {
           </button>
         </form>
       </section>
+      <section
+        className={`p-6 rounded-lg shadow-lg transition-all duration-300 ease-in-out ${
+          darkMode ? "bg-gray-700" : "bg-white"
+        } border-t-4 ${darkMode ? "border-gray-600" : "border-green-500"}`}
+      >
+        <h2
+          className={`text-2xl font-semibold mb-4 transition-all duration-300 ease-in-out ${
+            darkMode ? "text-gray-200" : "text-gray-700"
+          }`}
+        >
+          Указания за управление на документи
+        </h2>
+        <ol className={`list-decimal pl-6 space-y-2 ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
+          <li>
+            За да добавите нов документ, попълнете полетата във формата по-долу, като предоставите информация за име, клиент, година, код и локация.
+          </li>
+          <ol className={`list-decimal pl-6 space-y-2 ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
+            <li>Още нещо</li>
+          </ol>
+          <li>
+            Използвайте таблицата за преглед на съществуващите документи. Тук ще намерите информация за име, клиент, година и код.
+          </li>
+          <li>
+            За да редактирате документ, натиснете бутона <strong>Редактирай</strong> (иконка с молив). Ще се отвори прозорец за редактиране.
+          </li>
+          <li>
+            За да изтриете документ, натиснете бутона <strong>Изтрий</strong> (иконка с кошче). Ще се появи потвърждение.
+          </li>
+          <li>
+            Всички промени се записват автоматично в системата.
+     
+          </li>
+        </ol>
+      </section>
 
+
+    </div>
       {/* Таблица със списък на документи */}
       <section
         className={`p-4 mt-10 rounded-lg shadow-md transition-all duration-300 ease-in-out ${
