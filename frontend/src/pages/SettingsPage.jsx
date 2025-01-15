@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify';
-
+import { BACKEND_URL } from "../services/ApiService";
 const SettingsPage = () => {
     const [editingProfile, setEditingProfile] = useState(null); // За редакция
   const [user, setUser] = useState(null); // Потребителски данни
@@ -12,12 +12,9 @@ const SettingsPage = () => {
   const fetchUserData = async () => {
     try {
       if (token) {
-        const response = await axios.get(
-          "https://archive-management-project.onrender.com/api/auth/me",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const response = await axios.get(`${BACKEND_URL}/api/auth/me`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         setUser(response.data);
       }
     } catch (error) {
@@ -25,6 +22,7 @@ const SettingsPage = () => {
       setUser(null);
       localStorage.removeItem("token");
       toast.error("Неуспешно зареждане на потребителските данни.");
+      console.log(error);
     }
   };
 
@@ -36,16 +34,18 @@ const SettingsPage = () => {
   const handleSave = async () => {
     try {
       const response = await axios.put(
-        "https://archive-management-project.onrender.com/api/auth/me",
+        `${BACKEND_URL}/api/auth/me/${editingProfile._id}`,
         editingProfile,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
 
-      setUser(response.data.user); // Обнови потребителските данни
-      setEditingProfile(null); // Излез от режима на редакция
+      setEditingProfile(null); // Излизаме от режим редакция
       toast.success("Успешно редактира профила си!");
+
+      // Обнови потребителските данни
+      fetchUserData(); // Ново извикване за зареждане на актуализираните данни
     } catch (error) {
       console.error(error);
       toast.error("Възникна грешка при запазването на данните!");
@@ -61,7 +61,6 @@ const SettingsPage = () => {
   if (!user) {
     return <p>Loading...</p>;
   }
-
 
       
   return (
