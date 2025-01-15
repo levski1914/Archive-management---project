@@ -59,58 +59,83 @@ const SettingsPage = () => {
   };
 
   if (!user) {
-    return <p>Loading...</p>;
+    return (
+      <div className="flex justify-center items-center h-screen bg-gray-100">
+        <p className="text-lg font-semibold text-gray-600">Loading...</p>
+      </div>
+    );
   }
-
       
   return (
-    <div>
-    <h1>Settings Page</h1>
-    {error && <p style={{ color: "red" }}>{error}</p>}
-
-    {editingProfile ? (
-      <div>
-        {/* Режим за редакция */}
-        <form>
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+      <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-md">
+        <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">
+          Settings Page
+        </h1>
+        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+        {editingProfile ? (
           <div>
-            <label>Name:</label>
-            <input
-              type="text"
-              name="name"
-              value={editingProfile.name}
-              onChange={handleChange}
-            />
+            <form>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">
+                  Name:
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  value={editingProfile.name}
+                  onChange={handleChange}
+                  className="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">
+                  Email:
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={editingProfile.email}
+                  onChange={handleChange}
+                  className="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div className="flex justify-between">
+                <button
+                  type="button"
+                  onClick={handleSave}
+                  className="px-4 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700"
+                >
+                  Save
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setEditingProfile(null)}
+                  className="px-4 py-2 bg-gray-300 text-gray-800 font-medium rounded-md hover:bg-gray-400"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
           </div>
+        ) : (
           <div>
-            <label>Email:</label>
-            <input
-              type="email"
-              name="email"
-              value={editingProfile.email}
-              onChange={handleChange}
-            />
+            <p className="text-gray-700 mb-4">
+              <strong className="font-medium">Name:</strong> {user.name}
+            </p>
+            <p className="text-gray-700 mb-6">
+              <strong className="font-medium">Email:</strong> {user.email}
+            </p>
+            <button
+              onClick={() => setEditingProfile(user)}
+              className="w-full px-4 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700"
+            >
+              Edit
+            </button>
           </div>
-          <button type="button" onClick={handleSave}>
-            Save
-          </button>
-          <button type="button" onClick={() => setEditingProfile(null)}>
-            Cancel
-          </button>
-        </form>
+        )}
       </div>
-    ) : (
-      <div>
-        {/* Показване на данните */}
-        <p>
-          <strong>Name:</strong> {user.name}
-        </p>
-        <p>
-          <strong>Email:</strong> {user.email}
-        </p>
-        <button onClick={() => setEditingProfile(user)}>Edit</button>
-      </div>
-    )}
-  </div>
+    </div>
   )
 }
 
