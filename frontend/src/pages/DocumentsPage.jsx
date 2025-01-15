@@ -251,7 +251,7 @@ const DocumentsPage = () => {
         >
           Указания за управление на документи
         </h2>
-        <ol className={`list-decimal pl-6 space-y-2 ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
+        <ol className={`list-decimal pl-6 space-y-2 text-justify ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
           <li>
             За да добавите нов документ, попълнете полетата във формата по-долу, като предоставите информация за име, клиент, година, код и локация.
           </li>

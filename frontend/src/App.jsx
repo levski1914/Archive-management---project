@@ -19,6 +19,7 @@ import SlavePage from "./pages/SlavePage";
 import Navbar from "./components/common/Navbar";
 import DocumentsPage from "./pages/DocumentsPage";
 import StatisticPage from "./pages/StatisticPage";
+import SettingsPage from "./pages/SettingsPage";
 
 axios.interceptors.response.use((response)=>response,(error)=>{
   if(error.response && error.response.status===401){
@@ -143,6 +144,14 @@ function App() {
               element={
                 <ProtectedRoute user={user?.role === "master"}>
                   <StatisticPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute user={user?.role === "master"}>
+                  <SettingsPage />
                 </ProtectedRoute>
               }
             />

@@ -104,3 +104,35 @@ exports.getMe = async (req, res) => {
     res.status(500).json({ message: "Error fetching user data", error });
   }
 };
+
+exports.updateMe = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateMe = await User.findByIdAndUpdate(id, req.body, {
+      new: true,
+    });
+    if (!updateMe) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json(updateMe);
+  } catch (error) {
+    res.status(500).json({ message: "Error updating user", error });
+  }
+};
+
+// exports.updateFolder = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const updatedFolder = await Folder.findByIdAndUpdate(id, req.body, {
+//       new: true,
+//     });
+
+//     if (!updatedFolder)
+//       return res.status(404).json({ message: "Folder not found" });
+
+//     res.status(200).json(updatedFolder);
+//   } catch (error) {
+//     res.status(500).json({ message: "Error updating folder", error });
+//   }
+// };
