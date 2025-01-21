@@ -187,8 +187,10 @@ const DocumentsPage = () => {
               required
             />
           </div>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-1">
+          <label htmlFor="raft">Рафт:</label>
             <input
+            id="raft"
               type="number"
               placeholder="Рафт"
               value={newFolder.location.shelf}
@@ -202,7 +204,11 @@ const DocumentsPage = () => {
                 darkMode ? "bg-gray-600 text-gray-300" : "bg-white text-black"
               } border`}
             />
+            <br />
+          <label htmlFor="column">Колона:</label>
+
             <input
+            id="column"
               type="number"
               placeholder="Колона"
               value={newFolder.location.column}
@@ -216,7 +222,11 @@ const DocumentsPage = () => {
                 darkMode ? "bg-gray-600 text-gray-300" : "bg-white text-black"
               } border`}
             />
+            <br />
+          <label htmlFor="row">Ред:</label>
+
             <input
+            id="row"
               type="number"
               placeholder="Ред"
               value={newFolder.location.row}
