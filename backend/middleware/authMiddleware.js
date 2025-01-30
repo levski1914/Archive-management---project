@@ -23,12 +23,12 @@ const authenticate = async (req, res, next) => {
   } catch (error) {
     console.error("Token validation error:", error);
 
-    // Проверка за изтекъл токен
     if (error.name === "TokenExpiredError") {
-      return res.status(401).json({ message: "Token has expired" });
+      return res
+        .status(401)
+        .json({ message: "Token has expired", expired: true });
     }
 
-    // За други грешки с токена
     return res.status(401).json({ message: "Invalid token" });
   }
 };

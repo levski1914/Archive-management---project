@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import ThemeContext from "../../services/ThemeContext";
+import { BACKEND_URL } from "../../services/ApiService";
 
 const RegisterCompany = () => {
   const [formData, setFormData] = useState({
@@ -21,16 +22,18 @@ const RegisterCompany = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "https://archive-management-project.onrender.com/api/auth/register-company",
+        `${BACKEND_URL}/api/auth/register-company`,
         formData
       );
       alert("Registration successful. Please login.");
       navigate("/login");
     } catch (error) {
       alert("Registration failed.");
-      console.error(error);
+      console.error("Error response:", error.response);
+      console.error("Error message:", error.message);
     }
   };
+  
 
   return (
     <div

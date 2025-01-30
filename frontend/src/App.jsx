@@ -20,16 +20,54 @@ import Navbar from "./components/common/Navbar";
 import DocumentsPage from "./pages/DocumentsPage";
 import StatisticPage from "./pages/StatisticPage";
 import SettingsPage from "./pages/SettingsPage";
+import { BACKEND_URL } from "./services/ApiService";
 
-axios.interceptors.response.use((response)=>response,(error)=>{
-  if(error.response && error.response.status===401){
-    toast.error("Сесията ви е изтекла. Моля, влезте отново.")
-    localStorage.removeItem("token")
-    localStorage.removeItem("user")
-    window.location.href="/login"
+axios.interceptors.response.use(
+  (response) => response, // Ако отговорът е успешен, просто го връщаме.
+  async (error) => {
+    const originalRequest = error.config;
+
+    // Ако Access Token е изтекъл (401) и няма вече Refresh Token -> Принудителен logout
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true; // Маркираме заявката като повторена
+
+      const refreshToken = localStorage.getItem("refreshToken");
+      if (!refreshToken) {
+        toast.error("Сесията ви е изтекла. Моля, влезте отново.");
+        localStorage.clear();
+        window.location.href = "/login";
+        return Promise.reject(error);
+      }
+
+      try {
+        // Опит за обновяване на Access Token
+        const response = await axios.post(
+          `${BACKEND_URL}/api/auth/refresh-token`,
+          { refreshToken }
+        );
+
+        const newAccessToken = response.data.accessToken;
+
+        // Запазване на новия Access Token
+        localStorage.setItem("token", newAccessToken);
+
+        // Презаписване на заглавието (Authorization) с новия Access Token
+        originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+
+        // Повторна заявка със същите данни, но с новия токен
+        return axios(originalRequest);
+      } catch (refreshError) {
+        // Ако Refresh Token-а също е невалиден -> Принудителен logout
+        toast.error("Сесията ви е изтекла. Моля, влезте отново.");
+        localStorage.clear();
+        window.location.href = "/login";
+        return Promise.reject(refreshError);
+      }
+    }
+
+    return Promise.reject(error);
   }
-  return Promise.reject(error)
-})
+);
 
 function App() {
   // const [count, setCount] = useState(0);
@@ -65,13 +103,14 @@ function App() {
     }
   }, []);
 
-  const handleLogin = (token, userData) => {
-    if (token) {
+  const handleLogin = (token, refreshToken, userData) => {
+    if (token && refreshToken) {
       localStorage.setItem("token", token);
+      localStorage.setItem("refreshToken", refreshToken);
       localStorage.setItem("user", JSON.stringify(userData));
       setUser(userData);
     } else {
-      console.error("Token is undefined!");
+      console.error("Login failed: Missing token or user data!");
     }
   };
   const handleLogout = () => {

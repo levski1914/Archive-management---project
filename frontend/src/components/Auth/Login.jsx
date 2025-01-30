@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ThemeContext from "../../services/ThemeContext";
+import { BACKEND_URL } from "../../services/ApiService";
 
 const Login = ({ onLogin }) => {
   const [formData, setFormData] = useState({
@@ -18,17 +19,25 @@ const Login = ({ onLogin }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Submitting form with data:", formData); // Проверка на данните
-
+    console.log("Submitting form with data:", formData); // Debugging
+  
     try {
       const response = await axios.post(
-        "https://archive-management-project.onrender.com/api/auth/login",
+        `${BACKEND_URL}/api/auth/login`,
         formData
       );
-
-      const { token, user } = response.data;
-      onLogin(token, user);
-
+  
+      console.log("Login response data:", response.data); // Log the full response here
+  
+      const { accessToken, refreshToken, user } = response.data; // Ако отговорът има тези стойности
+      if (accessToken && refreshToken && user) {
+        onLogin(accessToken, refreshToken, user); // Ако всичко е налично
+      } else {
+        console.error("Missing data in login response!");
+        alert("Login failed. Please check your credentials.");
+      }
+  
+      // Navigate based on user role
       if (user.role === "admin") {
         navigate("/admin");
       } else if (user.role === "master") {
@@ -39,11 +48,11 @@ const Login = ({ onLogin }) => {
         navigate("/login");
       }
     } catch (error) {
-      alert("Login failed. Please check your credentials.");
       console.error("Login error:", error);
+      alert("Login failed. Please check your credentials.");
     }
   };
-
+  
   return (
     <div
       className={`min-h-screen flex items-center justify-center  p-8 transition-all duration-300 ease-in-out ${
