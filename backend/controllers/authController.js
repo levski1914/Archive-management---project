@@ -8,18 +8,32 @@ exports.register = async (req, res) => {
   try {
     const { companyName, name, email, password } = req.body;
 
+    if (!companyName || !name || !email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    // Валидация на входните данни
+    if (typeof companyName !== "string" || companyName.length < 2) {
+      return res.status(400).json({ message: "Invalid company name" });
+    }
+
+    if (password.length < 6) {
+      return res
+        .status(400)
+        .json({ message: "Password must be at least 6 characters" });
+    }
+
+    // Хеширане на паролата
+
     // Създаване на компания
     const company = new Company({ name: companyName });
     await company.save();
-
-    // Хаширане на паролата
-    const hashedPassword = await bcrypt.hash(password, 10);
 
     // Създаване на администратор
     const admin = new User({
       name,
       email,
-      password,
+      password, // Запазваме хешираната парола
       role: "admin",
       companyId: company._id,
     });
