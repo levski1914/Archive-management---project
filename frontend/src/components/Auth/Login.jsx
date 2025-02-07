@@ -10,7 +10,7 @@ const Login = ({ onLogin }) => {
     companyName: "",
   });
   const navigate = useNavigate();
-  const { darkMode } = useContext(ThemeContext);
+  // const { darkMode } = useContext(ThemeContext);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
