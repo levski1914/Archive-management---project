@@ -120,173 +120,186 @@ const DocumentsPage = () => {
           : "bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 text-black"
       }`}
     >
-
-<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-   {/* Форма за добавяне на документ */}
-   <section
-        className={`p-6 rounded-lg shadow-lg transition-all duration-300 ease-in-out ${
-          darkMode ? "bg-gray-700" : "bg-white"
-        } border-t-4 ${darkMode ? "border-gray-600" : "border-green-500"}`}
-      >
-        <h2
-          className={`text-2xl flex font-semibold mb-4 transition-all duration-300 ease-in-out ${
-            darkMode ? "text-gray-200" : "text-gray-700"
-          }`}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+        {/* Форма за добавяне на документ */}
+        <section
+          className={`p-6 rounded-lg shadow-lg transition-all duration-300 ease-in-out ${
+            darkMode ? "bg-gray-700" : "bg-white"
+          } border-t-4 ${darkMode ? "border-gray-600" : "border-green-500"}`}
         >
-          <FaFolderOpen className="text-blue-600 mr-2" />
-          Добавяне на документ
-        </h2>
-        <form onSubmit={handleAddFolder} className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <input
-              type="text"
-              placeholder="Име на документа"
-              value={newFolder.name}
-              onChange={(e) =>
-                setNewFolder({ ...newFolder, name: e.target.value })
-              }
-              className={`w-full p-2 rounded-lg transition-all duration-300 ease-in-out ${
-                darkMode ? "bg-gray-600 text-gray-300" : "bg-white text-black"
-              } border`}
-              required
-            />
-            <input
-              type="text"
-              placeholder="Клиент"
-              value={newFolder.client}
-              onChange={(e) =>
-                setNewFolder({ ...newFolder, client: e.target.value })
-              }
-              className={`w-full p-2 rounded-lg transition-all duration-300 ease-in-out ${
-                darkMode ? "bg-gray-600 text-gray-300" : "bg-white text-black"
-              } border`}
-              required
-            />
-            <input
-              type="number"
-              placeholder="Година"
-              value={newFolder.year}
-              onChange={(e) =>
-                setNewFolder({ ...newFolder, year: e.target.value })
-              }
-              className={`w-full p-2 rounded-lg transition-all duration-300 ease-in-out ${
-                darkMode ? "bg-gray-600 text-gray-300" : "bg-white text-black"
-              } border`}
-              required
-            />
-            <input
-              type="text"
-              placeholder="Шифър"
-              value={newFolder.code}
-              onChange={(e) =>
-                setNewFolder({ ...newFolder, code: e.target.value })
-              }
-              className={`w-full p-2 rounded-lg transition-all duration-300 ease-in-out ${
-                darkMode ? "bg-gray-600 text-gray-300" : "bg-white text-black"
-              } border`}
-              required
-            />
-          </div>
-          <div className="grid grid-cols-1 gap-1">
-          <label htmlFor="raft">Рафт:</label>
-            <input
-            id="raft"
-              type="number"
-              placeholder="Рафт"
-              value={newFolder.location.shelf}
-              onChange={(e) =>
-                setNewFolder({
-                  ...newFolder,
-                  location: { ...newFolder.location, shelf: e.target.value },
-                })
-              }
-              className={`w-full p-2 rounded-lg transition-all duration-300 ease-in-out ${
-                darkMode ? "bg-gray-600 text-gray-300" : "bg-white text-black"
-              } border`}
-            />
-            <br />
-          <label htmlFor="column">Колона:</label>
-
-            <input
-            id="column"
-              type="number"
-              placeholder="Колона"
-              value={newFolder.location.column}
-              onChange={(e) =>
-                setNewFolder({
-                  ...newFolder,
-                  location: { ...newFolder.location, column: e.target.value },
-                })
-              }
-              className={`w-full p-2 rounded-lg transition-all duration-300 ease-in-out ${
-                darkMode ? "bg-gray-600 text-gray-300" : "bg-white text-black"
-              } border`}
-            />
-            <br />
-          <label htmlFor="row">Ред:</label>
-
-            <input
-            id="row"
-              type="number"
-              placeholder="Ред"
-              value={newFolder.location.row}
-              onChange={(e) =>
-                setNewFolder({
-                  ...newFolder,
-                  location: { ...newFolder.location, row: e.target.value },
-                })
-              }
-              className={`w-full p-2 rounded-lg transition-all duration-300 ease-in-out ${
-                darkMode ? "bg-gray-600 text-gray-300" : "bg-white text-black"
-              } border`}
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition"
+          <h2
+            className={`text-2xl flex font-semibold mb-4 transition-all duration-300 ease-in-out ${
+              darkMode ? "text-gray-200" : "text-gray-700"
+            }`}
           >
-            Добави документ
-          </button>
-        </form>
-      </section>
-      <section
-        className={`p-6 rounded-lg shadow-lg transition-all duration-300 ease-in-out ${
-          darkMode ? "bg-gray-700" : "bg-white"
-        } border-t-4 ${darkMode ? "border-gray-600" : "border-green-500"}`}
-      >
-        <h2
-          className={`text-2xl font-semibold mb-4 transition-all duration-300 ease-in-out ${
-            darkMode ? "text-gray-200" : "text-gray-700"
-          }`}
+            <FaFolderOpen className="text-blue-600 mr-2" />
+            Добавяне на документ
+          </h2>
+          <form onSubmit={handleAddFolder} className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <textarea
+                type="text"
+                placeholder="Име на документа"
+                value={newFolder.name}
+                onChange={(e) =>
+                  setNewFolder({ ...newFolder, name: e.target.value })
+                }
+                className={`w-full p-2 rounded-lg transition-all duration-300 ease-in-out ${
+                  darkMode ? "bg-gray-600 text-gray-300" : "bg-white text-black"
+                } border`}
+                required
+              />
+              <input
+                type="text"
+                placeholder="Клиент"
+                value={newFolder.client}
+                onChange={(e) =>
+                  setNewFolder({ ...newFolder, client: e.target.value })
+                }
+                className={`w-full p-2 rounded-lg transition-all duration-300 ease-in-out ${
+                  darkMode ? "bg-gray-600 text-gray-300" : "bg-white text-black"
+                } border`}
+                required
+              />
+              <input
+                type="number"
+                placeholder="Година"
+                value={newFolder.year}
+                onChange={(e) =>
+                  setNewFolder({ ...newFolder, year: e.target.value })
+                }
+                className={`w-full p-2 rounded-lg transition-all duration-300 ease-in-out ${
+                  darkMode ? "bg-gray-600 text-gray-300" : "bg-white text-black"
+                } border`}
+                required
+              />
+              <input
+                type="text"
+                placeholder="Шифър"
+                value={newFolder.code}
+                onChange={(e) =>
+                  setNewFolder({ ...newFolder, code: e.target.value })
+                }
+                className={`w-full p-2 rounded-lg transition-all duration-300 ease-in-out ${
+                  darkMode ? "bg-gray-600 text-gray-300" : "bg-white text-black"
+                } border`}
+                required
+              />
+            </div>
+            <div className="grid grid-cols-1 gap-1">
+              <label htmlFor="raft">Рафт:</label>
+              <input
+                id="raft"
+                type="number"
+                placeholder="Рафт"
+                value={newFolder.location.shelf}
+                onChange={(e) =>
+                  setNewFolder({
+                    ...newFolder,
+                    location: { ...newFolder.location, shelf: e.target.value },
+                  })
+                }
+                className={`w-full p-2 rounded-lg transition-all duration-300 ease-in-out ${
+                  darkMode ? "bg-gray-600 text-gray-300" : "bg-white text-black"
+                } border`}
+              />
+              <br />
+              <label htmlFor="column">Колона:</label>
+
+              <input
+                id="column"
+                type="number"
+                placeholder="Колона"
+                value={newFolder.location.column}
+                onChange={(e) =>
+                  setNewFolder({
+                    ...newFolder,
+                    location: { ...newFolder.location, column: e.target.value },
+                  })
+                }
+                className={`w-full p-2 rounded-lg transition-all duration-300 ease-in-out ${
+                  darkMode ? "bg-gray-600 text-gray-300" : "bg-white text-black"
+                } border`}
+              />
+              <br />
+              <label htmlFor="row">Ред:</label>
+
+              <input
+                id="row"
+                type="number"
+                placeholder="Ред"
+                value={newFolder.location.row}
+                onChange={(e) =>
+                  setNewFolder({
+                    ...newFolder,
+                    location: { ...newFolder.location, row: e.target.value },
+                  })
+                }
+                className={`w-full p-2 rounded-lg transition-all duration-300 ease-in-out ${
+                  darkMode ? "bg-gray-600 text-gray-300" : "bg-white text-black"
+                } border`}
+              />
+            </div>
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition"
+            >
+              Добави документ
+            </button>
+          </form>
+        </section>
+        <section
+          className={`p-6 rounded-lg shadow-lg transition-all duration-300 ease-in-out ${
+            darkMode ? "bg-gray-700" : "bg-white"
+          } border-t-4 ${darkMode ? "border-gray-600" : "border-green-500"}`}
         >
-          Указания за управление на документи
-        </h2>
-        <ol className={`list-decimal pl-6 space-y-2 text-justify ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
-          <li>
-            За да добавите нов документ, попълнете полетата във формата по-долу, като предоставите информация за име, клиент, година, код и локация.
-          </li>
-          <ol className={`list-decimal pl-6 space-y-2 ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
-            <li>При липса на някоя от данните, може да се постави 0 или "липсва"</li>
-            <li>В начало, системата може да търси по 1 от 4те информации - име, клиент, година, шифър</li>
+          <h2
+            className={`text-2xl font-semibold mb-4 transition-all duration-300 ease-in-out ${
+              darkMode ? "text-gray-200" : "text-gray-700"
+            }`}
+          >
+            Указания за управление на документи
+          </h2>
+          <ol
+            className={`list-decimal pl-6 space-y-2 text-justify ${
+              darkMode ? "text-gray-400" : "text-gray-600"
+            }`}
+          >
+            <li>
+              За да добавите нов документ, попълнете полетата във формата
+              по-долу, като предоставите информация за име, клиент, година, код
+              и локация.
+            </li>
+            <ol
+              className={`list-decimal pl-6 space-y-2 ${
+                darkMode ? "text-gray-400" : "text-gray-600"
+              }`}
+            >
+              <li>
+                При липса на някоя от данните, може да се постави 0 или "липсва"
+              </li>
+              <li>
+                В начало, системата може да търси по 1 от 4те информации - име,
+                клиент, година, шифър
+              </li>
+            </ol>
+            <li>
+              Използвайте таблицата за преглед на съществуващите документи. Тук
+              ще намерите информация за име, клиент, година и код.
+            </li>
+            <li>
+              За да редактирате документ, натиснете бутона{" "}
+              <strong>Редактирай</strong> (иконка с молив). Ще се отвори
+              прозорец за редактиране.
+            </li>
+            <li>
+              За да изтриете документ, натиснете бутона <strong>Изтрий</strong>{" "}
+              (иконка с кошче). Ще се появи потвърждение.
+            </li>
+            <li>Всички промени се записват автоматично в системата.</li>
           </ol>
-          <li>
-            Използвайте таблицата за преглед на съществуващите документи. Тук ще намерите информация за име, клиент, година и код.
-          </li>
-          <li>
-            За да редактирате документ, натиснете бутона <strong>Редактирай</strong> (иконка с молив). Ще се отвори прозорец за редактиране.
-          </li>
-          <li>
-            За да изтриете документ, натиснете бутона <strong>Изтрий</strong> (иконка с кошче). Ще се появи потвърждение.
-          </li>
-          <li>
-            Всички промени се записват автоматично в системата.
-     
-          </li>
-        </ol>
-      </section>
-
-
-    </div>
+        </section>
+      </div>
       {/* Таблица със списък на документи */}
       <section
         className={`p-4 mt-10 rounded-lg shadow-md transition-all duration-300 ease-in-out ${

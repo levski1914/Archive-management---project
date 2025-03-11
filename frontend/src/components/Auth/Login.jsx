@@ -11,7 +11,7 @@ const Login = ({ onLogin }) => {
     companyName: "",
   });
   const navigate = useNavigate();
-  // const { darkMode } = useContext(ThemeContext);
+  const { darkMode } = useContext(ThemeContext);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -20,15 +20,15 @@ const Login = ({ onLogin }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Submitting form with data:", formData); // Debugging
-  
+
     try {
       const response = await axios.post(
         `${BACKEND_URL}/api/auth/login`,
         formData
       );
-  
+
       console.log("Login response data:", response.data); // Log the full response here
-  
+
       const { accessToken, refreshToken, user } = response.data; // Ако отговорът има тези стойности
       if (accessToken && refreshToken && user) {
         onLogin(accessToken, refreshToken, user); // Ако всичко е налично
@@ -36,7 +36,7 @@ const Login = ({ onLogin }) => {
         console.error("Missing data in login response!");
         alert("Login failed. Please check your credentials.");
       }
-  
+
       // Navigate based on user role
       if (user.role === "admin") {
         navigate("/admin");
@@ -52,7 +52,7 @@ const Login = ({ onLogin }) => {
       alert("Login failed. Please check your credentials.");
     }
   };
-  
+
   return (
     <div
       className={`min-h-screen flex items-center justify-center  p-8 transition-all duration-300 ease-in-out ${
